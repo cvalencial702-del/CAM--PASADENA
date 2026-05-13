@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comité de Ayuda Mutua Pasadena · CAM</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#1a2c4e;--navy-deep:#0d1b30;--navy-mid:#243558;
+  --accent:#c0392b;--accent-soft:#e74c3c;--accent-light:#fdecea;
+  --steel:#2980b9;--steel-light:#ebf5fb;
+  --gold:#d4ac0d;--gold-light:#fef9e7;
+  --green:#1a7a4a;--green-bg:#e8f7ef;
+  --white:#fff;--surface:#f4f6f9;--surface2:#eaecf0;
+  --border:#d0d6e0;--text:#1a2c4e;--muted:#6b7a99;--light:#9aaec1;
+  --r:6px;--rl:10px;
+  --sh:0 2px 8px rgba(26,44,78,.10);--shm:0 4px 18px rgba(26,44,78,.13);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--surface);color:var(--text);font-size:14px;min-height:100vh}
+.tb{background:var(--navy-deep);display:flex;align-items:center;gap:12px;padding:0 20px;height:58px;border-bottom:3px solid var(--accent);position:sticky;top:0;z-index:100}
+.tb-badge{background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:3px;letter-spacing:.05em;white-space:nowrap}
+.tb-title{font-size:14px;font-weight:600;color:#fff}
+.tb-sub{font-size:10px;color:#9aaec1;margin-top:1px}
+.tb-nav{margin-left:auto;display:flex;gap:3px;flex-wrap:wrap}
+.nb{background:transparent;border:none;color:#9aaec1;font-family:inherit;font-size:12px;padding:6px 11px;border-radius:var(--r);cursor:pointer;transition:all .15s;white-space:nowrap}
+.nb:hover{background:rgba(255,255,255,.08);color:#fff}
+.nb.on{background:var(--accent);color:#fff}
+.app{max-width:1140px;margin:0 auto;padding:26px 18px}
+.ph h1{font-size:21px;font-weight:600;color:var(--navy);margin-bottom:5px}
+.ph p{color:var(--muted);font-size:13px;margin-bottom:20px}
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:20px;box-shadow:var(--sh);margin-bottom:14px}
+.ch{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--surface2)}
+.ch h2{font-size:15px;font-weight:600;color:var(--navy)}
+.ci{width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.ci-b{background:var(--steel-light)}.ci-r{background:var(--accent-light)}.ci-g{background:var(--gold-light)}.ci-n{background:rgba(26,44,78,.07)}.ci-gn{background:var(--green-bg)}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fg label{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.04em;text-transform:uppercase}
+.fg input,.fg select,.fg textarea{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:8px 11px;font-family:inherit;font-size:13px;color:var(--text);outline:none;width:100%;transition:border .15s,box-shadow .15s}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--steel);box-shadow:0 0 0 3px rgba(41,128,185,.13);background:#fff}
+.fg input[readonly]{background:#f0f2f5;color:var(--muted)}
+.fg textarea{resize:vertical;min-height:70px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px}
+.gf{grid-column:1/-1}
+.sl{font-size:11px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.09em;margin:18px 0 10px;padding:0 0 6px;border-bottom:2px solid var(--accent-light)}
+.sl-blue{font-size:11px;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:.09em;margin:18px 0 10px;padding:0 0 6px;border-bottom:2px solid var(--steel-light)}
+.rtable{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:10px}
+.rtable th{background:var(--navy);color:#fff;padding:7px 10px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.rtable td{padding:7px 10px;border-bottom:1px solid var(--surface2);vertical-align:middle}
+.rtable td input{background:transparent;border:none;outline:none;font-family:inherit;font-size:13px;color:var(--text);width:100%}
+.rtable td input:focus{background:var(--steel-light);border-radius:3px;padding:2px 4px}
+.crow{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:11px;margin-bottom:8px}
+.brow{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:11px;margin-bottom:8px}
+.btn{display:inline-flex;align-items:center;gap:6px;border:none;border-radius:var(--r);padding:8px 16px;font-family:inherit;font-size:13px;font-weight:500;cursor:pointer;transition:all .15s}
+.btn-p{background:var(--navy);color:#fff}.btn-p:hover{background:var(--navy-mid)}
+.btn-a{background:var(--accent);color:#fff}.btn-a:hover{background:var(--accent-soft)}
+.btn-s{background:var(--surface2);color:var(--text);border:1px solid var(--border)}.btn-s:hover{background:var(--border)}
+.btn-st{background:var(--steel);color:#fff}.btn-st:hover{background:#2471a3}
+.btn-gn{background:var(--green);color:#fff}.btn-gn:hover{background:#146038}
+.btn-o{background:#fff;color:var(--navy);border:1px solid var(--border)}.btn-o:hover{background:var(--surface)}
+.btn-d{background:var(--accent-light);color:var(--accent);border:1px solid #f5c6c3}.btn-d:hover{background:var(--accent);color:#fff}
+.btn-warn{background:var(--gold-light);color:#7d600a;border:1px solid #e8d078}.btn-warn:hover{background:var(--gold);color:#fff}
+.sm{padding:5px 11px;font-size:12px}
+.add-btn{background:var(--steel-light);color:var(--steel);border:1px dashed var(--steel);border-radius:var(--r);padding:7px 14px;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;width:100%;margin-top:6px;transition:all .15s}
+.add-btn:hover{background:var(--steel);color:#fff}
+.add-btn-gn{background:var(--green-bg);color:var(--green);border:1px dashed var(--green);border-radius:var(--r);padding:7px 14px;font-family:inherit;font-size:12px;font-weight:500;cursor:pointer;margin-top:6px;transition:all .15s;display:inline-block}
+.add-btn-gn:hover{background:var(--green);color:#fff}
+.rm-btn{background:var(--accent-light);border:1px solid #f5c6c3;color:var(--accent);border-radius:var(--r);padding:6px 10px;cursor:pointer;font-size:13px;font-weight:700;font-family:inherit;transition:all .13s}
+.rm-btn:hover{background:var(--accent);color:#fff}
+.clist{display:flex;flex-direction:column;gap:10px}
+.ccard{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:all .15s;box-shadow:var(--sh)}
+.ccard:hover{border-color:var(--steel);box-shadow:var(--shm);transform:translateY(-1px)}
+.cav{width:44px;height:44px;border-radius:9px;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex-shrink:0}
+.cinfo h3{font-size:14px;font-weight:600;color:var(--navy)}
+.cinfo p{font-size:12px;color:var(--muted);margin-top:3px}
+.cbadge{background:var(--green-bg);color:var(--green);font-size:11px;padding:3px 10px;border-radius:20px;white-space:nowrap;font-weight:600}
+.at{width:100%;border-collapse:collapse}
+.at th{text-align:left;font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;padding:8px 12px;border-bottom:2px solid var(--surface2);background:var(--surface)}
+.at td{padding:10px 12px;font-size:13px;border-bottom:1px solid var(--surface2);vertical-align:middle}
+.at tr:last-child td{border-bottom:none}
+.at tr:hover td{background:var(--surface)}
+.tag{display:inline-block;font-size:11px;padding:3px 8px;border-radius:4px;font-weight:600}
+.tg{background:var(--green-bg);color:var(--green)}.tb2{background:var(--steel-light);color:#1a5c8c}
+.ty{background:var(--gold-light);color:#7d600a}.tr2{background:var(--accent-light);color:var(--accent)}
+.srow5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:22px}
+.sc{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:16px;box-shadow:var(--sh)}
+.sc .sl2{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.sc .sv{font-size:26px;font-weight:600;color:var(--navy);margin-top:4px;font-family:'IBM Plex Mono',monospace}
+.sc .ss{font-size:11px;color:var(--light);margin-top:2px}
+.sbar{background:var(--navy-deep);border-radius:var(--r);padding:10px 16px;display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.sbar span{font-size:12px;color:#9aaec1}.sbar strong{color:#fff}
+.dot{width:8px;height:8px;background:#27ae60;border-radius:50%;display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.back{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer;margin-bottom:16px;padding:5px 0;border:none;background:none;font-family:inherit}
+.back:hover{color:var(--navy)}
+.ov{position:fixed;inset:0;background:rgba(13,27,48,.72);z-index:200;display:flex;align-items:center;justify-content:center;padding:16px}
+.mb{background:var(--white);border-radius:var(--rl);box-shadow:var(--shm);padding:26px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;border-top:4px solid var(--accent)}
+.mb-lg{max-width:800px}
+.mb-gn{border-top-color:var(--green)}
+.mh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px}
+.mh h2{font-size:16px;font-weight:600;color:var(--navy)}
+.mh p{font-size:12px;color:var(--muted);margin-top:3px}
+.mc{background:var(--surface2);border:none;border-radius:var(--r);width:28px;height:28px;cursor:pointer;font-size:17px;color:var(--muted);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit}
+.mc:hover{background:var(--accent-light);color:var(--accent)}
+.acta-sec{background:linear-gradient(90deg,var(--navy) 0%,var(--navy-mid) 100%);color:#fff;padding:9px 14px;border-radius:var(--r);display:flex;align-items:center;gap:10px;margin:16px 0 10px;font-size:13px;font-weight:700}
+.acta-sec .num{background:var(--green);width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.acta-tbl{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:10px}
+.acta-tbl th{background:var(--navy);color:#fff;padding:7px 10px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.acta-tbl td{padding:8px 10px;border-bottom:1px solid var(--surface2)}
+.mod-toggle{display:flex;gap:8px;margin-top:4px}
+.mod-btn{background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:5px 14px;font-family:inherit;font-size:13px;cursor:pointer;transition:all .15s;font-weight:500}
+.mod-btn.act{background:var(--green);border-color:var(--green);color:#fff}
+.ebox{background:linear-gradient(135deg,var(--navy-deep) 0%,#1e3460 100%);border-radius:var(--rl);padding:20px 24px;color:#fff;margin-bottom:16px;border:1px solid rgba(255,255,255,.07)}
+.et{display:inline-block;background:rgba(255,255,255,.10);border:1px solid rgba(255,255,255,.18);color:#e8ecf5;font-size:12px;padding:4px 10px;border-radius:4px;margin:3px}
+/* company segment tabs */
+.seg-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.seg-tab{background:var(--surface2);border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:5px 14px;font-family:inherit;font-size:12px;cursor:pointer;transition:all .15s;font-weight:500}
+.seg-tab:hover{background:var(--border)}
+.seg-tab.on{background:var(--navy);border-color:var(--navy);color:#fff}
+/* emergency */
+.em-section{margin-bottom:18px}
+.em-section-title{display:flex;align-items:center;gap:10px;background:var(--navy);color:#fff;padding:10px 16px;border-radius:var(--r) var(--r) 0 0;font-size:13px;font-weight:700}
+.em-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;padding:14px;background:var(--surface);border:1px solid var(--border);border-top:none;border-radius:0 0 var(--r) var(--r)}
+.em-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px;box-shadow:var(--sh)}
+.em-num-table{width:100%;border-collapse:collapse;font-size:13px}
+.em-num-table td{padding:6px 10px;border-bottom:1px solid var(--surface2)}
+.em-num-table .num{font-weight:700;color:var(--steel);font-family:'IBM Plex Mono',monospace;font-size:15px}
+.acta-card{background:var(--white);border:1px solid var(--border);border-radius:var(--rl);padding:14px 18px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:all .15s;box-shadow:var(--sh);margin-bottom:10px}
+.acta-card:hover{border-color:var(--green);box-shadow:var(--shm);transform:translateY(-1px)}
+.acta-av{width:44px;height:44px;border-radius:9px;background:linear-gradient(135deg,var(--navy) 0%,var(--steel) 100%);color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.consec{background:var(--navy);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:3px;font-family:'IBM Plex Mono',monospace;margin-right:6px}
+.file-drop{border:2px dashed var(--border);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:all .15s;background:var(--surface)}
+.file-drop:hover{border-color:var(--steel);background:var(--steel-light)}
+.file-attached{background:var(--green-bg);border:1px solid #a8d5bc;border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--green);margin-top:8px}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--navy-deep);color:#fff;padding:12px 20px;border-radius:var(--rl);border-left:4px solid var(--accent);font-size:13px;z-index:300;box-shadow:var(--shm);animation:si .25s}
+.tok{border-color:var(--green)}.twarn{border-color:var(--gold)}
+@keyframes si{from{transform:translateX(110px);opacity:0}to{transform:none;opacity:1}}
+.empty{text-align:center;padding:36px 20px;color:var(--muted)}
+.empty .icon{font-size:38px;margin-bottom:10px;opacity:.35}
+.dvd{height:1px;background:var(--surface2);margin:14px 0}
+.fe{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+.d2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.ms{text-align:center;padding:12px;background:var(--surface);border-radius:var(--r)}
+.ms .mv{font-size:22px;font-weight:700;color:var(--navy)}
+.ms .ml{font-size:11px;color:var(--muted);margin-top:2px}
+.acell{display:flex;gap:5px;flex-wrap:wrap}
+.tbar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.pin-show-btn{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:0 4px;vertical-align:middle}
+@media(max-width:768px){
+  .g2,.g3,.srow5,.d2{grid-template-columns:1fr}
+  .crow,.brow{grid-template-columns:1fr}
+  .tb-sub{display:none}
+  .srow5{grid-template-columns:1fr 1fr}
+}
+/* MAP */
+#cam-map{height:420px;border-radius:var(--rl);border:1px solid var(--border);z-index:1}
+.map-loading{height:420px;display:flex;align-items:center;justify-content:center;background:var(--surface);border-radius:var(--rl);border:1px solid var(--border);color:var(--muted);flex-direction:column;gap:10px}
+.leaflet-popup-content-wrapper{border-radius:var(--r) !important;box-shadow:var(--shm) !important;border-top:3px solid var(--accent)}
+.leaflet-popup-content{font-family:'IBM Plex Sans',sans-serif;font-size:13px;padding:4px 2px}
+.map-marker-label{font-weight:700;color:var(--navy);font-size:13px;margin-bottom:3px}
+.map-marker-addr{font-size:12px;color:var(--muted);margin-bottom:5px}
+.map-marker-btn{background:var(--navy);color:#fff;border:none;border-radius:4px;padding:5px 12px;font-size:12px;cursor:pointer;font-family:inherit;width:100%}
+.map-marker-btn:hover{background:var(--navy-mid)}
+</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+</head>
+<body>
+<div class="tb">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div class="tb-badge">CAM</div>
+    <div><div class="tb-title">Comité de Ayuda Mutua Pasadena</div><div class="tb-sub">Sistema de Gestión de Emergencias · HSEQ</div></div>
+  </div>
+  <div class="tb-nav">
+    <button class="nb on" onclick="go('home')">📊 Dashboard</button>
+    <button class="nb" onclick="go('companies')">🏢 Empresas</button>
+    <button class="nb" onclick="go('activities')">📅 Actividades</button>
+    <button class="nb" onclick="go('actas')">📋 Actas CAM</button>
+    <button class="nb" onclick="go('mapa')">🗺 Mapa</button>
+    <button class="nb" onclick="go('emergencia')">🚨 Emergencias</button>
+    <button class="nb" onclick="go('register')">➕ Registrar</button>
+  </div>
+</div>
+<div class="app" id="root"></div>
+<div id="tc"></div>
+
+<script>
+/* ── STORAGE ── */
+var DB={
+  c:JSON.parse(localStorage.getItem('cam_c')||'[]'),
+  a:JSON.parse(localStorage.getItem('cam_a')||'[]'),
+  actas:JSON.parse(localStorage.getItem('cam_actas')||'[]'),
+  save:function(){
+    localStorage.setItem('cam_c',JSON.stringify(this.c));
+    localStorage.setItem('cam_a',JSON.stringify(this.a));
+    localStorage.setItem('cam_actas',JSON.stringify(this.actas));
+  }
+};
+
+function nextConsec(){
+  if(!DB.actas.length)return 'ACTA-CAM-001';
+  var nums=DB.actas.map(function(a){return parseInt((a.consec||'0').replace(/\D/g,''))||0;});
+  return 'ACTA-CAM-'+String(Math.max.apply(null,nums)+1).padStart(3,'0');
+}
+
+/* seed */
+if(!DB.c.length){
+  DB.c=[
+    {id:'c1',name:'Industrias Metálicas S.A.S',addr:'Cra 15 # 45-32, Bodega 8, Pasadena',legal:'Jorge Ramírez Ospina',
+     arl:'ARL SURA',arl_pol:'POL-2024-087654',arl_tel:'018000 767 872',arl_asesor:'Camilo Rueda',arl_email:'crueda@sura.com.co',
+     cd:'Ana Lucia Torres',cdp:'3105678901',cde:'atores@metalicas.com',
+     el:'Carlos Suárez',elp:'3201234567',ele:'csuarez@metalicas.com',
+     sl:'Paola Venegas',slp:'3189876543',sle:'pvenegas@metalicas.com',
+     pp:60,po:25,pt:85,pin:'1234',
+     contacts:[{n:'Ana Torres',p:'3105678901',r:'Delegado CAM'}],
+     brigade:[{n:'Luis Morales',r:'Primeros Auxilios',g:'H'},{n:'Sandra Pérez',r:'Evacuación',g:'M'},{n:'René Castro',r:'Contraincendios',g:'H'}],
+     emerg:'Incendio, Derrame químico, Sismo, Accidente laboral',
+     recursos_fisicos:[{cant:'3',desc:'Extintores CO2 10lb',ubic:'Planta baja'}],
+     recursos_humanos:[{cant:'6',caract:'Brigadistas certificados CRUE'}],
+     apoyo_mutuo:'2 extintores portátiles disponibles',apoyo_humano:'3 brigadistas para apoyo externo',
+     acuerdo_pdf:'',acuerdo_nombre:'',date:'2025-11-14'},
+    {id:'c2',name:'Logística Express Colombia',addr:'Av. Calle 80 # 100-21, Zona Industrial',legal:'Martina Herrera Gil',
+     arl:'Positiva Compañía de Seguros',arl_pol:'POL-2025-112233',arl_tel:'018000 111 170',arl_asesor:'Sandra Gómez',arl_email:'sgomez@positiva.gov.co',
+     cd:'Pedro Cárdenas',cdp:'3004567890',cde:'pcardenas@logexpress.co',
+     el:'Rosa Méndez',elp:'3123456789',ele:'rmendez@logexpress.co',
+     sl:'Felipe Ortiz',slp:'3167654321',sle:'fortiz@logexpress.co',
+     pp:30,po:12,pt:42,pin:'5678',
+     contacts:[{n:'Pedro Cárdenas',p:'3004567890',r:'Delegado CAM'}],
+     brigade:[{n:'Jorge Niño',r:'Contraincendios',g:'H'},{n:'Claudia Vega',r:'Primeros Auxilios',g:'M'}],
+     emerg:'Incendio, Accidente de tránsito, Sismo',
+     recursos_fisicos:[{cant:'2',desc:'Extintores multipropósito',ubic:'Bodega'}],
+     recursos_humanos:[{cant:'4',caract:'Curso básico emergencias'}],
+     apoyo_mutuo:'Vehículo de carga para evacuación',apoyo_humano:'2 conductores con primeros auxilios',
+     acuerdo_pdf:'',acuerdo_nombre:'',date:'2025-12-01'}
+  ];
+  DB.a=[
+    {id:'a1',cid:'c1',act:'Simulacro de evacuación',obj:'Evaluar tiempos de respuesta',resp:'Ana Torres',date:'2026-03-15',pers:85,st:'Completada'},
+    {id:'a2',cid:'c1',act:'Capacitación primeros auxilios',obj:'Entrenamiento BLS',resp:'Carlos Suárez',date:'2026-04-10',pers:20,st:'Completada'},
+    {id:'a3',cid:'c2',act:'Inspección de extintores',obj:'Verificar carga y vigencia',resp:'Pedro Cárdenas',date:'2026-05-20',pers:5,st:'Programada'}
+  ];
+  DB.actas=[{id:'ac1',consec:'ACTA-CAM-001',tipo:'Reunión ordinaria CAM',modalidad:'Presencial',fecha:'2026-02-20',hi:'09:00',hf:'11:00',lugar:'Sala Ind. Metálicas',objetivo:'Revisión PEC 2026',asistentes:[{n:'Ana Torres',cargo:'Delegado CAM',eid:'c1'},{n:'Pedro Cárdenas',cargo:'Delegado CAM',eid:'c2'}],agenda:[{tema:'Apertura y quórum',des:'Quórum completo.'},{tema:'Revisión PEC 2026',des:'Actualización de PEC presentada.'}],compromisos:[{desc:'Actualizar plano de evacuación',resp:'Ana Torres',fecha:'2026-03-01',st:'Pendiente'}],empresas:['c1','c2']}];
+  DB.save();
+}
+
+/* ── STATE ── */
+var V='home',CID=null,EA=null,ACTA_ID=null,MOD='Presencial';
+var ACT_SEG='all'; /* active segment in activities view */
+var TAGS={Completada:'tg',Programada:'tb2','En ejecución':'ty',Cancelada:'tr2'};
+var ATAGS={Pendiente:'tr2','En proceso':'ty',Completado:'tg'};
+var pdfData='',pdfName='';
+/* PIN modal state */
+var pinAction='',pinTarget='',pinTarget2='';
+/* Master recovery PIN — never displayed, only used as fallback */
+var MASTER='PASADENA';
+
+function tag(s,map){map=map||TAGS;return '<span class="tag '+(map[s]||'tb2')+'">'+s+'</span>';}
+function go(v,id){
+  V=v;
+  if(id){if(v==='detail')CID=id;else if(v==='acta-detail')ACTA_ID=id;}
+  document.getElementById('root').innerHTML='';
+  render();
+  document.querySelectorAll('.nb').forEach(function(b){b.classList.remove('on');});
+  var idx={home:0,companies:1,activities:2,actas:3,mapa:4,emergencia:5,register:6,detail:1,'acta-detail':3,'new-acta':3};
+  var btns=document.querySelectorAll('.nb');
+  if(idx[v]!==undefined && btns[idx[v]])btns[idx[v]].classList.add('on');
+}
+function toast(msg,type){
+  var t=document.createElement('div');
+  t.className='toast '+(type||'');t.textContent=msg;
+  document.getElementById('tc').appendChild(t);
+  setTimeout(function(){t.remove();},3200);
+}
+function render(){
+  var r=document.getElementById('root');
+  if(V==='home')r.innerHTML=home();
+  else if(V==='companies')r.innerHTML=companies();
+  else if(V==='register')r.innerHTML=regForm();
+  else if(V==='detail')r.innerHTML=detail();
+  else if(V==='activities')r.innerHTML=allActs();
+  else if(V==='actas')r.innerHTML=actas();
+  else if(V==='new-acta')r.innerHTML=newActaForm();
+  else if(V==='acta-detail')r.innerHTML=actaDetail();
+  else if(V==='emergencia')r.innerHTML=emergView();
+  else if(V==='mapa'){r.innerHTML=mapaView();initMap();}
+}
+function gv(id){return (document.getElementById(id)||{}).value||'';}
+function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+/* ══════════════ HOME ══════════════ */
+function home(){
+  var tc=DB.c.length,ta=DB.a.length,tp=0,tac=DB.actas.length;
+  DB.c.forEach(function(c){tp+=(parseInt(c.pt)||0);});
+  var comp=DB.a.filter(function(a){return a.st==='Completada';}).length;
+  var now=new Date().toLocaleDateString('es-CO',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  var ccards=DB.c.map(function(c){
+    var n=DB.a.filter(function(a){return a.cid===c.id;}).length;
+    return '<div class="ccard" onclick="go(\'detail\',\''+c.id+'\')" ><div class="cav">'+c.name.charAt(0)+'</div><div class="cinfo"><h3>'+c.name+'</h3><p>'+c.addr+'</p></div><div style="margin-left:auto;text-align:right"><div class="cbadge">'+n+' actividades</div><div style="font-size:11px;color:var(--light);margin-top:4px">Desde '+c.date+'</div></div></div>';
+  }).join('');
+  return '<div class="sbar"><span class="dot"></span><span>Sistema <strong>activo</strong></span><span>·</span><span>CAM Pasadena · Bogotá</span><span style="margin-left:auto;font-size:11px">'+now+'</span></div>'+
+  '<div class="srow5">'+
+  '<div class="sc"><div class="sl2">Empresas</div><div class="sv">'+tc+'</div><div class="ss">vinculadas</div></div>'+
+  '<div class="sc"><div class="sl2">Actividades</div><div class="sv">'+ta+'</div><div class="ss">'+comp+' completadas</div></div>'+
+  '<div class="sc"><div class="sl2">Personas</div><div class="sv">'+tp.toLocaleString('es-CO')+'</div><div class="ss">total empresas</div></div>'+
+  '<div class="sc"><div class="sl2">Actas CAM</div><div class="sv">'+tac+'</div><div class="ss">registradas</div></div>'+
+  '<div class="sc" style="cursor:pointer;border-color:var(--accent)" onclick="go(\'emergencia\')"><div class="sl2">🚨 Emergencias</div><div class="sv" style="font-size:18px;margin-top:6px">Ver</div><div class="ss">centros y líneas</div></div>'+
+  '</div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-b">🏢</div><h2>Empresas registradas</h2><button class="btn btn-p sm" style="margin-left:auto" onclick="go(\'register\')">+ Nueva</button></div>'+
+  (DB.c.length?'<div class="clist">'+ccards+'</div>':'<div class="empty"><div class="icon">🏗</div><p>Sin empresas.</p></div>')+'</div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-b">🗺</div><h2>Mapa de empresas vinculadas</h2><button class="btn btn-o sm" style="margin-left:auto" onclick="go(\'mapa\')">Ver mapa completo</button></div>'+
+  '<div id="home-map-wrap">'+
+  (DB.c.length?'<div id="cam-map-home" style="height:320px;border-radius:var(--r);border:1px solid var(--border)"></div>':'<div class="map-loading"><span style="font-size:30px">🗺</span><p>Registre empresas para ver el mapa</p></div>')+
+  '</div></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-gn">📋</div><h2>Últimas actas CAM</h2><button class="btn btn-o sm" style="margin-left:auto" onclick="go(\'actas\')">Ver todas</button></div>'+
+  (DB.actas.length?'<div>'+DB.actas.slice().reverse().slice(0,3).map(actaCardHtml).join('')+'</div>':'<div class="empty"><div class="icon">📋</div><p>Sin actas.</p></div>')+'</div>';
+}
+
+/* ══════════════ COMPANIES ══════════════ */
+function companies(){
+  var ccards=DB.c.map(function(c){
+    var n=DB.a.filter(function(a){return a.cid===c.id;}).length;
+    return '<div class="ccard" onclick="go(\'detail\',\''+c.id+'\')"><div class="cav">'+c.name.charAt(0)+'</div><div class="cinfo"><h3>'+c.name+'</h3><p>'+c.addr+' · Rep. Legal: '+c.legal+'</p></div><div style="margin-left:auto;text-align:right"><div class="cbadge">'+n+' actividades</div><div style="font-size:11px;color:var(--light);margin-top:4px">Desde '+c.date+'</div></div></div>';
+  }).join('');
+  return '<div class="ph"><h1>Empresas vinculadas al CAM</h1><p>Gestión de organizaciones</p></div>'+
+  '<div class="tbar"><button class="btn btn-p" onclick="go(\'register\')">+ Registrar empresa</button><span style="color:var(--muted);font-size:13px">'+DB.c.length+' empresas</span></div>'+
+  (DB.c.length?'<div class="clist">'+ccards+'</div>':'<div class="empty"><div class="icon">🏗</div><p>Sin empresas.</p></div>');
+}
+
+/* ══════════════ REGISTER FORM ══════════════ */
+function regForm(){
+  pdfData='';pdfName='';
+  return '<div class="ph"><h1>Registrar empresa vinculada al CAM</h1><p>Complete el formulario ANEXO de información</p></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-b">📋</div><h2>Información general</h2></div>'+
+  '<div class="g2">'+
+  '<div class="fg gf"><label>Nombre de la Entidad *</label><input id="f_name" placeholder="Nombre completo de la empresa"></div>'+
+  '<div class="fg gf"><label>Dirección</label><input id="f_addr" placeholder="Dirección completa, bodega, piso..."></div>'+
+  '<div class="fg gf"><label>Representante Legal</label><input id="f_legal" placeholder="Nombre completo"></div></div>'+
+  '<div class="sl-blue">🏥 ARL — Administradora de Riesgos Laborales</div>'+
+  '<div class="g3"><div class="fg"><label>Nombre de la ARL</label>'+
+  '<select id="f_arl"><option value="">Seleccione ARL...</option>'+
+  '<option>ARL SURA</option><option>Positiva Compañía de Seguros</option><option>ARL Colmena</option>'+
+  '<option>Seguros Bolívar ARL</option><option>Liberty Seguros ARL</option>'+
+  '<option>Axa Colpatria ARL</option><option>Equidad Seguros ARL</option><option>Otra</option>'+
+  '</select></div>'+
+  '<div class="fg"><label>N° de póliza / contrato</label><input id="f_arl_pol" placeholder="Ej: 123456789"></div>'+
+  '<div class="fg"><label>Teléfono de atención ARL</label><input id="f_arl_tel" placeholder="018000 111 170"></div></div>'+
+  '<div class="g2"><div class="fg"><label>Asesor / Contacto ARL</label><input id="f_arl_asesor" placeholder="Nombre del asesor asignado"></div>'+
+  '<div class="fg"><label>Correo del asesor ARL</label><input id="f_arl_email" placeholder="asesor@arl.com"></div></div>'+
+  '<div class="sl">🚨 Delegado al CAM</div>'+
+  '<div class="g3"><div class="fg"><label>Nombre</label><input id="f_cd"></div><div class="fg"><label>Teléfono</label><input id="f_cdp"></div><div class="fg"><label>Correo</label><input id="f_cde"></div></div>'+
+  '<div class="sl">⚡ Líder de emergencia</div>'+
+  '<div class="g3"><div class="fg"><label>Nombre</label><input id="f_el"></div><div class="fg"><label>Teléfono</label><input id="f_elp"></div><div class="fg"><label>Correo</label><input id="f_ele"></div></div>'+
+  '<div class="sl">🛡 Líder SG-SST</div>'+
+  '<div class="g3"><div class="fg"><label>Nombre</label><input id="f_sl"></div><div class="fg"><label>Teléfono</label><input id="f_slp"></div><div class="fg"><label>Correo</label><input id="f_sle"></div></div>'+
+  '<div class="sl">👥 Personas vinculadas</div>'+
+  '<div class="g3" style="margin-bottom:10px"><div class="fg"><label>Permanentes</label><input id="f_pp" type="number" min="0" placeholder="0" oninput="calcT()"></div><div class="fg"><label>Ocasionales</label><input id="f_po" type="number" min="0" placeholder="0" oninput="calcT()"></div><div class="fg"><label>Total</label><input id="f_pt" readonly></div></div>'+
+  '<div class="sl">🔐 PIN de empresa</div>'+
+  '<div class="g2">'+
+  '<div class="fg"><label>PIN de acceso (4 dígitos) *</label>'+
+  '<div style="position:relative"><input id="f_pin" type="password" maxlength="4" placeholder="••••" style="letter-spacing:.3em;font-size:18px;text-align:center;padding-right:40px"><button class="pin-show-btn" style="position:absolute;right:10px;top:50%;transform:translateY(-50%)" onclick="togglePin(\'f_pin\',\'f_pin_eye\')"><span id="f_pin_eye">👁</span></button></div>'+
+  '<div style="font-size:11px;color:var(--muted);margin-top:4px">⚠️ Guárdelo en lugar seguro. Necesario para editar o eliminar.</div></div>'+
+  '<div class="fg"><label>Confirmar PIN</label><input id="f_pin2" type="password" maxlength="4" placeholder="••••" style="letter-spacing:.3em;font-size:18px;text-align:center"></div></div>'+
+  '</div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-n">📞</div><h2>Contactos adicionales</h2></div>'+
+  '<div id="clist"><div class="crow ce"><div class="fg"><label>Nombre</label><input name="cn"></div><div class="fg"><label>Teléfono</label><input name="cp"></div><div class="fg"><label>Cargo</label><input name="cr"></div><div></div></div></div>'+
+  '<button class="add-btn" onclick="addC()">+ Agregar contacto</button></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-r">🚒</div><h2>Brigada de emergencias</h2></div>'+
+  '<div id="blist"><div class="brow be"><div class="fg"><label>Nombre</label><input name="bn"></div><div class="fg"><label>Rol</label><input name="br"></div><div class="fg"><label>Género</label><select name="bg"><option value="H">Hombre</option><option value="M">Mujer</option></select></div></div></div>'+
+  '<button class="add-btn" onclick="addB()">+ Agregar integrante</button></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-b">🏗</div><h2>Recursos disponibles para emergencias</h2></div>'+
+  '<div class="sl-blue">Recursos Físicos</div>'+
+  '<div style="overflow-x:auto"><table class="rtable"><thead><tr><th style="width:80px">Cantidad</th><th>Descripción</th><th>Ubicación</th><th style="width:36px"></th></tr></thead>'+
+  '<tbody id="rf_body"><tr><td><input name="rf_c" placeholder="0"></td><td><input name="rf_d" placeholder="Descripción"></td><td><input name="rf_u" placeholder="Ubicación"></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td></tr></tbody></table></div>'+
+  '<button class="add-btn" onclick="addRF()">+ Recurso físico</button>'+
+  '<div class="sl-blue" style="margin-top:16px">Recursos Humanos</div>'+
+  '<div style="overflow-x:auto"><table class="rtable"><thead><tr><th style="width:80px">Cantidad</th><th>Características del personal</th><th style="width:36px"></th></tr></thead>'+
+  '<tbody id="rh_body"><tr><td><input name="rh_c" placeholder="0"></td><td><input name="rh_d" placeholder="Características y formación"></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td></tr></tbody></table></div>'+
+  '<button class="add-btn" onclick="addRH()">+ Recurso humano</button>'+
+  '<div class="g2" style="margin-top:16px">'+
+  '<div class="fg"><label>Posibilidad de apoyo mutuo (físico)</label><textarea id="f_apf" placeholder="Describa..."></textarea></div>'+
+  '<div class="fg"><label>Disponibilidad de recurso humano mutuo</label><textarea id="f_aph" placeholder="Describa..."></textarea></div>'+
+  '</div></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-gn">📎</div><h2>Acuerdo de conformación y vinculación</h2></div>'+
+  '<div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px">Adjuntar documento PDF del acuerdo</div>'+
+  '<div class="file-drop" onclick="document.getElementById(\'f_pdf\').click()">'+
+  '<input type="file" id="f_pdf" accept=".pdf" onchange="handlePDF(this)" style="display:none">'+
+  '<div style="font-size:30px;margin-bottom:8px">📄</div>'+
+  '<div style="font-size:13px;color:var(--muted)">Clic para adjuntar PDF del acuerdo</div>'+
+  '<div style="font-size:11px;color:var(--light);margin-top:4px">Solo archivos PDF · Máx. 5MB</div>'+
+  '</div>'+
+  '<div id="pdf_preview"></div></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-r">⚠️</div><h2>Emergencias contempladas en el PEC</h2></div>'+
+  '<div class="fg"><label>Tipos de emergencia</label><textarea id="f_em" placeholder="Ej: Incendio, derrame químico, sismo, accidente laboral..."></textarea></div></div>'+
+  '<div class="fe"><button class="btn btn-s" onclick="go(\'companies\')">Cancelar</button><button class="btn btn-a" onclick="saveC()">✅ Registrar empresa</button></div>';
+}
+
+function togglePin(inputId,eyeId){
+  var inp=document.getElementById(inputId);
+  var eye=document.getElementById(eyeId);
+  if(!inp)return;
+  inp.type=inp.type==='password'?'text':'password';
+  if(eye)eye.textContent=inp.type==='password'?'👁':'🙈';
+}
+function calcT(){
+  var p=parseInt(gv('f_pp'))||0,o=parseInt(gv('f_po'))||0;
+  var el=document.getElementById('f_pt');if(el)el.value=p+o;
+}
+function addC(){
+  var r=document.createElement('div');r.className='crow ce';
+  r.innerHTML='<div class="fg"><label>Nombre</label><input name="cn"></div><div class="fg"><label>Teléfono</label><input name="cp"></div><div class="fg"><label>Cargo</label><input name="cr"></div><button class="rm-btn" onclick="this.parentElement.remove()">✕</button>';
+  document.getElementById('clist').appendChild(r);
+}
+function addB(){
+  var r=document.createElement('div');r.className='brow be';
+  r.innerHTML='<div class="fg"><label>Nombre</label><input name="bn"></div><div class="fg"><label>Rol</label><input name="br"></div><div class="fg"><label>Género</label><select name="bg"><option value="H">Hombre</option><option value="M">Mujer</option></select></div>';
+  document.getElementById('blist').appendChild(r);
+}
+function addRF(){
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td><input name="rf_c" placeholder="0"></td><td><input name="rf_d" placeholder="Descripción"></td><td><input name="rf_u" placeholder="Ubicación"></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td>';
+  document.getElementById('rf_body').appendChild(tr);
+}
+function addRH(){
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td><input name="rh_c" placeholder="0"></td><td><input name="rh_d" placeholder="Características"></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td>';
+  document.getElementById('rh_body').appendChild(tr);
+}
+function handlePDF(inp){
+  var f=inp.files[0];if(!f)return;
+  if(f.size>5*1024*1024){toast('Archivo supera 5MB','twarn');return;}
+  pdfName=f.name;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    pdfData=e.target.result;
+    document.getElementById('pdf_preview').innerHTML='<div class="file-attached">📄 <strong>'+esc(pdfName)+'</strong> — adjunto correctamente</div>';
+  };
+  reader.readAsDataURL(f);
+}
+function saveC(){
+  var nm=gv('f_name');if(!nm.trim()){toast('El nombre es obligatorio');return;}
+  var pin=gv('f_pin'),pin2=gv('f_pin2');
+  if(!pin||pin.length<4){toast('El PIN debe tener 4 dígitos','twarn');return;}
+  if(pin!==pin2){toast('Los PINs no coinciden','twarn');return;}
+  var pp=parseInt(gv('f_pp'))||0,po=parseInt(gv('f_po'))||0;
+  var co={id:'c'+Date.now(),name:nm,addr:gv('f_addr'),legal:gv('f_legal'),
+    arl:gv('f_arl'),arl_pol:gv('f_arl_pol'),arl_tel:gv('f_arl_tel'),
+    arl_asesor:gv('f_arl_asesor'),arl_email:gv('f_arl_email'),
+    cd:gv('f_cd'),cdp:gv('f_cdp'),cde:gv('f_cde'),
+    el:gv('f_el'),elp:gv('f_elp'),ele:gv('f_ele'),
+    sl:gv('f_sl'),slp:gv('f_slp'),sle:gv('f_sle'),
+    pp:pp,po:po,pt:pp+po,emerg:gv('f_em'),pin:pin,
+    apoyo_mutuo:gv('f_apf'),apoyo_humano:gv('f_aph'),
+    acuerdo_pdf:pdfData,acuerdo_nombre:pdfName,
+    date:new Date().toISOString().split('T')[0],contacts:[],brigade:[],
+    recursos_fisicos:[],recursos_humanos:[]};
+  document.querySelectorAll('.ce').forEach(function(r){co.contacts.push({n:r.querySelector('[name=cn]').value,p:r.querySelector('[name=cp]').value,r:r.querySelector('[name=cr]').value});});
+  document.querySelectorAll('.be').forEach(function(r){co.brigade.push({n:r.querySelector('[name=bn]').value,r:r.querySelector('[name=br]').value,g:r.querySelector('[name=bg]').value});});
+  document.querySelectorAll('#rf_body tr').forEach(function(r){co.recursos_fisicos.push({cant:r.querySelector('[name=rf_c]').value,desc:r.querySelector('[name=rf_d]').value,ubic:r.querySelector('[name=rf_u]').value});});
+  document.querySelectorAll('#rh_body tr').forEach(function(r){co.recursos_humanos.push({cant:r.querySelector('[name=rh_c]').value,caract:r.querySelector('[name=rh_d]').value});});
+  DB.c.push(co);DB.save();pdfData='';pdfName='';
+  toast('Empresa registrada. Guarde su PIN de acceso.','tok');go('companies');
+}
+
+/* ══════════════ DETAIL ══════════════ */
+function detail(){
+  var co=DB.c.find(function(c){return c.id===CID;});
+  if(!co)return '<div class="empty"><p>No encontrada.</p></div>';
+  var acts=DB.a.filter(function(a){return a.cid===co.id;});
+  var bH=(co.brigade||[]).filter(function(b){return b.g==='H';}).length;
+  var bM=(co.brigade||[]).filter(function(b){return b.g==='M';}).length;
+  var types=co.emerg?co.emerg.split(',').map(function(e){return '<span class="et">'+e.trim()+'</span>';}).join(''):'';
+  var arows=acts.map(function(a){
+    return '<tr><td><strong>'+a.act+'</strong></td><td style="color:var(--muted);max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+a.obj+'</td><td>'+a.resp+'</td><td>'+a.date+'</td><td style="text-align:center;font-weight:600;color:var(--steel)">'+a.pers+'</td><td>'+tag(a.st)+'</td><td>'+
+    '<div class="acell"><button class="btn btn-o sm" onclick="prevPDF(\''+a.id+'\')">👁 PDF</button><button class="btn sm btn-s" onclick="reqPin(\'editA\',\''+a.id+'\',\''+co.id+'\')">✏️ Editar</button></div></td></tr>';
+  }).join('');
+  var crows=(co.contacts||[]).filter(function(c){return c.n;}).map(function(ct){
+    return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--surface2);font-size:13px"><span><strong>'+ct.n+'</strong> · <span style="color:var(--muted)">'+ct.r+'</span></span><span style="color:var(--steel)">'+ct.p+'</span></div>';
+  }).join('');
+  var brows=(co.brigade||[]).filter(function(b){return b.n;}).map(function(b){
+    return '<div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--surface2);font-size:13px"><strong>'+b.n+'</strong><span class="tag tb2">'+b.r+'</span><span style="color:var(--muted);font-size:12px">'+(b.g==='H'?'Hombre':'Mujer')+'</span></div>';
+  }).join('');
+  var rfRows=(co.recursos_fisicos||[]).filter(function(r){return r.desc;}).map(function(r){return '<tr><td style="font-weight:600;color:var(--steel)">'+r.cant+'</td><td>'+r.desc+'</td><td style="color:var(--muted)">'+r.ubic+'</td></tr>';}).join('');
+  var rhRows=(co.recursos_humanos||[]).filter(function(r){return r.caract;}).map(function(r){return '<tr><td style="font-weight:600;color:var(--steel)">'+r.cant+'</td><td>'+r.caract+'</td></tr>';}).join('');
+  var pdfBtn=co.acuerdo_nombre?'<a href="'+co.acuerdo_pdf+'" download="'+esc(co.acuerdo_nombre)+'" class="btn btn-st sm">📥 Descargar acuerdo</a>':'<span style="font-size:12px;color:var(--muted)">Sin acuerdo adjunto</span>';
+  return '<button class="back" onclick="go(\'companies\')">← Volver</button>'+
+  '<div class="ebox"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px">'+
+  '<div><div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:5px">'+co.name+'</div>'+
+  '<div style="font-size:13px;color:#9aaec1">'+co.addr+'</div>'+
+  '<div style="font-size:13px;color:#9aaec1;margin-top:2px">Rep. Legal: '+co.legal+'</div></div>'+
+  '<div style="display:flex;gap:8px;flex-shrink:0">'+
+  '<button class="btn btn-warn sm" onclick="reqPin(\'editCo\',\''+co.id+'\')">✏️ Editar</button>'+
+  '<button class="btn btn-st sm" onclick="openResetPin(\''+co.id+'\')">🔑 Restablecer PIN</button>'+
+  '<button class="btn btn-d sm" onclick="reqPin(\'delCo\',\''+co.id+'\')">🗑 Eliminar</button>'+
+  '</div></div>'+
+  (types?'<div style="margin-top:13px;padding-top:13px;border-top:1px solid rgba(255,255,255,.12)"><div style="font-size:11px;font-weight:700;color:#9aaec1;text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px">Emergencias contempladas en el PEC</div>'+types+'</div>':'')+'</div>'+
+  '<div class="d2">'+
+  '<div class="card"><div class="ch"><div class="ci ci-b">👤</div><h2>Contactos clave</h2></div>'+
+  '<table style="width:100%;font-size:13px;border-collapse:collapse">'+
+  '<tr><td style="color:var(--muted);padding:5px 0;width:115px;vertical-align:top">Delegado CAM</td><td style="padding:5px 0"><strong>'+co.cd+'</strong><br><span style="color:var(--muted);font-size:12px">'+co.cdp+' · '+co.cde+'</span></td></tr>'+
+  '<tr><td style="color:var(--muted);padding:5px 0;vertical-align:top">Líder emergencias</td><td style="padding:5px 0"><strong>'+co.el+'</strong><br><span style="color:var(--muted);font-size:12px">'+co.elp+' · '+co.ele+'</span></td></tr>'+
+  '<tr><td style="color:var(--muted);padding:5px 0;vertical-align:top">Líder SG-SST</td><td style="padding:5px 0"><strong>'+co.sl+'</strong><br><span style="color:var(--muted);font-size:12px">'+co.slp+' · '+co.sle+'</span></td></tr>'+
+  '</table>'+(crows?'<div class="dvd"></div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:7px">Contactos adicionales</div>'+crows:'')+'</div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-r">🚒</div><h2>Brigada de emergencias</h2></div>'+
+  '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:13px">'+
+  '<div class="ms"><div class="mv">'+((co.brigade||[]).filter(function(b){return b.n;}).length)+'</div><div class="ml">Total brigada</div></div>'+
+  '<div class="ms" style="background:var(--steel-light)"><div class="mv" style="color:var(--steel)">'+bH+'</div><div class="ml" style="color:var(--steel)">Hombres</div></div>'+
+  '<div class="ms" style="background:var(--gold-light)"><div class="mv" style="color:#7d600a">'+bM+'</div><div class="ml" style="color:#7d600a">Mujeres</div></div></div>'+
+  brows+
+  '<div class="dvd"></div><div style="display:flex;justify-content:space-between;font-size:13px;color:var(--muted)"><span>Total: <strong style="color:var(--navy)">'+co.pt+'</strong></span><span>Perm: '+co.pp+' · Ocas: '+co.po+'</span></div></div></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-b">🏗</div><h2>Recursos disponibles para emergencias</h2></div>'+
+  '<div class="g2">'+
+  '<div><div style="font-size:12px;font-weight:700;color:var(--steel);text-transform:uppercase;margin-bottom:8px">Recursos Físicos</div>'+
+  (rfRows?'<div style="overflow-x:auto"><table class="at"><thead><tr><th>Cant.</th><th>Descripción</th><th>Ubicación</th></tr></thead><tbody>'+rfRows+'</tbody></table></div>':'<p style="font-size:13px;color:var(--muted)">Sin recursos.</p>')+
+  '</div><div>'+
+  '<div style="font-size:12px;font-weight:700;color:var(--steel);text-transform:uppercase;margin-bottom:8px">Recursos Humanos</div>'+
+  (rhRows?'<div style="overflow-x:auto"><table class="at"><thead><tr><th>Cant.</th><th>Características</th></tr></thead><tbody>'+rhRows+'</tbody></table></div>':'<p style="font-size:13px;color:var(--muted)">Sin recursos.</p>')+
+  '</div></div>'+
+  '<div class="dvd"></div><div class="g2">'+
+  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Apoyo mutuo físico</div><div style="font-size:13px;background:var(--surface);border-radius:var(--r);padding:10px">'+(co.apoyo_mutuo||'No especificado')+'</div></div>'+
+  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:6px">Recurso humano mutuo</div><div style="font-size:13px;background:var(--surface);border-radius:var(--r);padding:10px">'+(co.apoyo_humano||'No especificado')+'</div></div>'+
+  '</div></div>'+
+  '<div class="card"><div class="ch"><div class="ci" style="background:#e8f4fd;">🏥</div><h2>ARL — Administradora de Riesgos Laborales</h2></div>'+
+  (co.arl?
+  '<div class="g2">'+
+  '<div style="display:flex;flex-direction:column;gap:10px">'+
+  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Nombre de la ARL</div>'+
+  '<div style="font-size:15px;font-weight:600;color:var(--navy)">'+co.arl+'</div></div>'+
+  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">N° Póliza / Contrato</div>'+
+  '<div style="font-size:13px;color:var(--text);font-family:\'IBM Plex Mono\',monospace">'+(co.arl_pol||'No registrado')+'</div></div>'+
+  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Teléfono de atención</div>'+
+  '<div style="font-size:14px;font-weight:700;color:var(--steel)">📞 '+(co.arl_tel||'No registrado')+'</div></div>'+
+  '</div>'+
+  '<div style="display:flex;flex-direction:column;gap:10px">'+
+  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Asesor / Contacto ARL</div>'+
+  '<div style="font-size:13px;color:var(--text)">'+(co.arl_asesor||'No registrado')+'</div></div>'+
+  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Correo del asesor</div>'+
+  '<div style="font-size:13px;color:var(--steel)">'+(co.arl_email||'No registrado')+'</div></div>'+
+  '</div></div>'
+  :'<div style="color:var(--muted);font-size:13px;padding:6px 0">Sin información ARL registrada.</div>')+
+  '</div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-gn">📎</div><h2>Acuerdo de conformación y vinculación</h2><div style="margin-left:auto">'+pdfBtn+'</div></div></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-g">📅</div><h2>Actividades registradas</h2>'+
+  '<button class="btn btn-p sm" style="margin-left:auto" onclick="openAM(\''+co.id+'\')">+ Nueva actividad</button></div>'+
+  (acts.length?'<div style="overflow-x:auto"><table class="at"><thead><tr><th>Actividad</th><th>Objetivo</th><th>Responsable</th><th>Fecha</th><th>Asist.</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+arows+'</tbody></table></div>':'<div class="empty"><div class="icon">📋</div><p>Sin actividades.</p></div>')+'</div>';
+}
+
+/* ══════════════ PIN MODAL ══════════════ */
+function reqPin(action,id,id2){
+  pinAction=action;pinTarget=id;pinTarget2=id2||'';
+  var labels={delCo:'Eliminar empresa',editCo:'Editar empresa',editA:'Editar actividad',delActa:'Eliminar acta',editActa:'Editar acta'};
+  var isCam=(action==='delActa'||action==='editActa');
+  var ov=document.createElement('div');ov.className='ov';ov.id='pin-modal';
+  ov.onclick=function(e){if(e.target===ov)closePinM();};
+  var forgotLink=(!isCam)?'<div style="text-align:center;margin-top:10px"><button onclick="showRecovery()" style="background:none;border:none;color:var(--steel);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline">¿Olvidé mi PIN? → Usar PIN de recuperación</button></div>':'';
+  ov.innerHTML='<div class="mb"><div class="mh"><div><h2>🔐 Verificación de seguridad</h2><p>'+(labels[action]||action)+(isCam?' · Clave CAM':' · PIN de empresa')+'</p></div><button class="mc" onclick="closePinM()">✕</button></div>'+
+  '<div id="pin_section"><div class="fg" style="margin-bottom:6px"><label>'+(isCam?'Clave de administración CAM':'PIN de empresa (4 dígitos)')+'</label>'+
+  '<input id="pin_inp" type="password" maxlength="'+(isCam?'10':'4')+'" placeholder="••••" style="letter-spacing:.3em;font-size:20px;text-align:center" onkeydown="if(event.key===\'Enter\')checkPin()"></div>'+forgotLink+'</div>'+
+  '<div id="recovery_section" style="display:none"><div style="background:var(--gold-light);border:1px solid #e8d078;border-radius:var(--r);padding:12px 14px;margin-bottom:12px;font-size:12px;color:#7d600a">⚠️ <strong>PIN de recuperación</strong> — Ingrese la clave maestra CAM Pasadena para desbloquear sin el PIN original.</div>'+
+  '<div class="fg" style="margin-bottom:8px"><label>Clave maestra de recuperación</label><input id="recovery_inp" type="password" placeholder="Clave maestra" style="letter-spacing:.2em;font-size:16px;text-align:center" onkeydown="if(event.key===\'Enter\')checkRecovery()"></div>'+
+  '<div style="text-align:center;margin-top:6px"><button onclick="hideRecovery()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;text-decoration:underline">← Volver al PIN normal</button></div></div>'+
+  '<div class="fe"><button class="btn btn-s" onclick="closePinM()">Cancelar</button><button class="btn btn-a" id="pin_verify_btn" onclick="checkPin()">✓ Verificar</button></div></div>';
+  document.body.appendChild(ov);
+  setTimeout(function(){var el=document.getElementById('pin_inp');if(el)el.focus();},80);
+}
+function closePinM(){var el=document.getElementById('pin-modal');if(el)el.remove();}
+function showRecovery(){
+  var ps=document.getElementById('pin_section');
+  var rs=document.getElementById('recovery_section');
+  var pb=document.getElementById('pin_verify_btn');
+  if(ps)ps.style.display='none';
+  if(rs)rs.style.display='block';
+  if(pb)pb.onclick=function(){checkRecovery();};
+  setTimeout(function(){var el=document.getElementById('recovery_inp');if(el)el.focus();},60);
+}
+function hideRecovery(){
+  var ps=document.getElementById('pin_section');
+  var rs=document.getElementById('recovery_section');
+  var pb=document.getElementById('pin_verify_btn');
+  if(ps)ps.style.display='block';
+  if(rs)rs.style.display='none';
+  if(pb)pb.onclick=function(){checkPin();};
+  setTimeout(function(){var el=document.getElementById('pin_inp');if(el)el.focus();},60);
+}
+function checkRecovery(){
+  var inp=document.getElementById('recovery_inp');if(!inp)return;
+  if(inp.value!==MASTER){toast('Clave de recuperación incorrecta ⛔');return;}
+  /* Recovery accepted — proceed same as correct PIN */
+  closePinM();
+  executeAction();
+}
+function executeAction(){
+  if(pinAction==='delCo'){
+    DB.c=DB.c.filter(function(c){return c.id!==pinTarget;});
+    DB.a=DB.a.filter(function(a){return a.cid!==pinTarget;});
+    DB.save();toast('Empresa eliminada');go('companies');
+  } else if(pinAction==='editCo'){
+    openEdit(pinTarget);
+  } else if(pinAction==='editA'){
+    var actE=DB.a.find(function(a){return a.id===pinTarget;});
+    if(actE)openAM(actE.cid,actE.id);
+  } else if(pinAction==='delActa'){
+    DB.actas=DB.actas.filter(function(a){return a.id!==pinTarget;});
+    DB.save();toast('Acta eliminada');go('actas');
+  } else if(pinAction==='editActa'){
+    ACTA_ID=pinTarget;go('acta-detail');
+  }
+}
+function checkPin(){
+  var inp=document.getElementById('pin_inp');if(!inp)return;
+  var entered=inp.value;
+  var isCam=(pinAction==='delActa'||pinAction==='editActa');
+  if(isCam){
+    if(entered!=='2026'){toast('Clave incorrecta ⛔');return;}
+  } else {
+    var lookId=pinTarget2||pinTarget||CID;
+    var co=DB.c.find(function(c){return c.id===lookId;});
+    if(!co && pinAction==='editA'){var act=DB.a.find(function(a){return a.id===pinTarget;});if(act)co=DB.c.find(function(c){return c.id===act.cid;});}
+    if(!co){toast('Empresa no encontrada');closePinM();return;}
+    if(entered!==co.pin){toast('PIN incorrecto ⛔ — Si olvidó su PIN, use "¿Olvidé mi PIN?"');return;}
+  }
+  closePinM();
+  executeAction();
+}
+
+/* ══════════════ RESET PIN ══════════════ */
+function openResetPin(cid){
+  var co=DB.c.find(function(c){return c.id===cid;});if(!co)return;
+  var ov=document.createElement('div');ov.className='ov';ov.id='reset-pin-modal';
+  ov.onclick=function(e){if(e.target===ov)closeResetPin();};
+  ov.innerHTML='<div class="mb mb-gn">'+
+  '<div class="mh"><div><h2>🔑 Restablecer PIN de empresa</h2><p>'+esc(co.name)+'</p></div><button class="mc" onclick="closeResetPin()">✕</button></div>'+
+  '<div style="background:var(--gold-light);border:1px solid #e8d078;border-radius:var(--r);padding:12px 14px;margin-bottom:16px;font-size:12px;color:#7d600a">'+
+  '⚠️ Para restablecer el PIN debe ingresar primero la <strong>clave maestra de recuperación</strong> del sistema CAM Pasadena.'+
+  '</div>'+
+  '<div class="fg" style="margin-bottom:12px"><label>Clave maestra de recuperación</label>'+
+  '<input id="rp_master" type="password" placeholder="Clave maestra" style="letter-spacing:.2em;font-size:16px;text-align:center">'+
+  '</div>'+
+  '<div id="rp_new_section" style="display:none">'+
+  '<div class="g2">'+
+  '<div class="fg"><label>Nuevo PIN (4 dígitos) *</label>'+
+  '<div style="position:relative"><input id="rp_new" type="password" maxlength="4" placeholder="••••" style="letter-spacing:.3em;font-size:18px;text-align:center;padding-right:38px">'+
+  '<button class="pin-show-btn" style="position:absolute;right:8px;top:50%;transform:translateY(-50%)" onclick="togglePin(\'rp_new\',\'rp_eye\')"><span id="rp_eye">👁</span></button></div></div>'+
+  '<div class="fg"><label>Confirmar nuevo PIN</label>'+
+  '<input id="rp_confirm" type="password" maxlength="4" placeholder="••••" style="letter-spacing:.3em;font-size:18px;text-align:center">'+
+  '</div></div>'+
+  '<div class="fe" style="margin-top:12px"><button class="btn btn-s" onclick="closeResetPin()">Cancelar</button><button class="btn btn-gn" onclick="saveNewPin(\''+cid+'\')">💾 Guardar nuevo PIN</button></div>'+
+  '</div>'+
+  '<div id="rp_verify_section" class="fe">'+
+  '<button class="btn btn-s" onclick="closeResetPin()">Cancelar</button>'+
+  '<button class="btn btn-a" onclick="verifyMasterForReset()">✓ Verificar clave maestra</button>'+
+  '</div>'+
+  '</div>';
+  document.body.appendChild(ov);
+  setTimeout(function(){var el=document.getElementById('rp_master');if(el)el.focus();},80);
+}
+function closeResetPin(){var el=document.getElementById('reset-pin-modal');if(el)el.remove();}
+function verifyMasterForReset(){
+  var inp=document.getElementById('rp_master');if(!inp)return;
+  if(inp.value!==MASTER){toast('Clave maestra incorrecta ⛔');return;}
+  inp.readOnly=true;inp.style.opacity='.5';
+  document.getElementById('rp_verify_section').style.display='none';
+  document.getElementById('rp_new_section').style.display='block';
+  setTimeout(function(){var el=document.getElementById('rp_new');if(el)el.focus();},60);
+  toast('Clave correcta — defina el nuevo PIN','tok');
+}
+function saveNewPin(cid){
+  var np=document.getElementById('rp_new').value;
+  var nc=document.getElementById('rp_confirm').value;
+  if(!np||np.length<4){toast('El nuevo PIN debe tener 4 dígitos','twarn');return;}
+  if(np!==nc){toast('Los PINs no coinciden','twarn');return;}
+  var idx=DB.c.findIndex(function(c){return c.id===cid;});
+  if(idx<0){toast('Empresa no encontrada');return;}
+  DB.c[idx].pin=np;DB.save();
+  closeResetPin();toast('PIN restablecido exitosamente','tok');
+}
+
+/* ══════════════ EDIT COMPANY MODAL ══════════════ */
+function openEdit(cid){
+  var co=DB.c.find(function(c){return c.id===cid;});if(!co)return;
+  var ov=document.createElement('div');ov.className='ov';ov.id='edit-modal';
+  ov.onclick=function(e){if(e.target===ov)closeEdit();};
+  ov.innerHTML='<div class="mb mb-lg mb-gn" style="max-height:92vh;overflow-y:auto"><div class="mh"><div><h2>✏️ Editar empresa</h2><p>'+esc(co.name)+'</p></div><button class="mc" onclick="closeEdit()">✕</button></div>'+
+  '<div class="g2">'+
+  '<div class="fg gf"><label>Nombre *</label><input id="e_name" value="'+esc(co.name)+'"></div>'+
+  '<div class="fg gf"><label>Dirección</label><input id="e_addr" value="'+esc(co.addr)+'"></div>'+
+  '<div class="fg gf"><label>Rep. Legal</label><input id="e_legal" value="'+esc(co.legal)+'"></div></div>'+
+  '<div class="sl-blue">🏥 ARL — Administradora de Riesgos Laborales</div>'+
+  '<div class="g3">'+
+  '<div class="fg"><label>Nombre de la ARL</label>'+
+  '<select id="e_arl">'+
+  '<option value="">Seleccione ARL...</option>'+
+  '<option'+(co.arl==='ARL SURA'?' selected':'')+'>ARL SURA</option>'+
+  '<option'+(co.arl==='Positiva Compañía de Seguros'?' selected':'')+'>Positiva Compañía de Seguros</option>'+
+  '<option'+(co.arl==='ARL Colmena'?' selected':'')+'>ARL Colmena</option>'+
+  '<option'+(co.arl==='Seguros Bolívar ARL'?' selected':'')+'>Seguros Bolívar ARL</option>'+
+  '<option'+(co.arl==='Liberty Seguros ARL'?' selected':'')+'>Liberty Seguros ARL</option>'+
+  '<option'+(co.arl==='Axa Colpatria ARL'?' selected':'')+'>Axa Colpatria ARL</option>'+
+  '<option'+(co.arl==='Equidad Seguros ARL'?' selected':'')+'>Equidad Seguros ARL</option>'+
+  '<option'+(co.arl==='Otra'?' selected':'')+'>Otra</option>'+
+  '</select></div>'+
+  '<div class="fg"><label>N° Póliza / Contrato</label><input id="e_arl_pol" value="'+esc(co.arl_pol||'')+'"></div>'+
+  '<div class="fg"><label>Teléfono de atención ARL</label><input id="e_arl_tel" value="'+esc(co.arl_tel||'')+'"></div>'+
+  '</div>'+
+  '<div class="g2" style="margin-top:6px">'+
+  '<div class="fg"><label>Asesor / Contacto ARL</label><input id="e_arl_asesor" value="'+esc(co.arl_asesor||'')+'"></div>'+
+  '<div class="fg"><label>Correo del asesor ARL</label><input id="e_arl_email" value="'+esc(co.arl_email||'')+'"></div>'+
+  '</div>'+
+  '<div class="sl">🚨 Delegado CAM</div><div class="g3">'+
+  '<div class="fg"><label>Nombre</label><input id="e_cd" value="'+esc(co.cd)+'"></div>'+
+  '<div class="fg"><label>Teléfono</label><input id="e_cdp" value="'+esc(co.cdp)+'"></div>'+
+  '<div class="fg"><label>Correo</label><input id="e_cde" value="'+esc(co.cde)+'"></div></div>'+
+  '<div class="sl">⚡ Líder emergencias</div><div class="g3">'+
+  '<div class="fg"><label>Nombre</label><input id="e_el" value="'+esc(co.el)+'"></div>'+
+  '<div class="fg"><label>Teléfono</label><input id="e_elp" value="'+esc(co.elp)+'"></div>'+
+  '<div class="fg"><label>Correo</label><input id="e_ele" value="'+esc(co.ele)+'"></div></div>'+
+  '<div class="sl">🛡 Líder SG-SST</div><div class="g3">'+
+  '<div class="fg"><label>Nombre</label><input id="e_sl" value="'+esc(co.sl)+'"></div>'+
+  '<div class="fg"><label>Teléfono</label><input id="e_slp" value="'+esc(co.slp)+'"></div>'+
+  '<div class="fg"><label>Correo</label><input id="e_sle" value="'+esc(co.sle)+'"></div></div>'+
+  '<div class="sl">👥 Personas</div><div class="g3" style="margin-bottom:10px">'+
+  '<div class="fg"><label>Permanentes</label><input id="e_pp" type="number" value="'+co.pp+'" oninput="calcTE()"></div>'+
+  '<div class="fg"><label>Ocasionales</label><input id="e_po" type="number" value="'+co.po+'" oninput="calcTE()"></div>'+
+  '<div class="fg"><label>Total</label><input id="e_pt" readonly value="'+co.pt+'"></div></div>'+
+  '<div class="sl">⚠️ Emergencias PEC</div>'+
+  '<div class="fg"><label>Tipos de emergencia</label><textarea id="e_em">'+esc(co.emerg)+'</textarea></div>'+
+  '<div class="sl">📝 Apoyo mutuo</div><div class="g2">'+
+  '<div class="fg"><label>Apoyo físico</label><textarea id="e_apf">'+esc(co.apoyo_mutuo)+'</textarea></div>'+
+  '<div class="fg"><label>Apoyo humano</label><textarea id="e_aph">'+esc(co.apoyo_humano)+'</textarea></div></div>'+
+  '<div class="sl">📎 Acuerdo de conformación</div>'+
+  (co.acuerdo_nombre?'<div class="file-attached" style="margin-bottom:10px">📄 <strong>'+esc(co.acuerdo_nombre)+'</strong> — actualmente adjunto</div>':'')+
+  '<div class="file-drop" onclick="document.getElementById(\'e_pdf\').click()">'+
+  '<input type="file" id="e_pdf" accept=".pdf" onchange="handlePDFEdit(this)" style="display:none">'+
+  '<div style="font-size:26px;margin-bottom:6px">📄</div>'+
+  '<div style="font-size:13px;color:var(--muted)">'+(co.acuerdo_nombre?'Reemplazar PDF del acuerdo':'Adjuntar PDF del acuerdo')+'</div>'+
+  '<div style="font-size:11px;color:var(--light);margin-top:3px">Solo PDF · Máx. 5MB</div></div>'+
+  '<div id="edit_pdf_preview" style="margin-top:6px"></div>'+
+  '<div class="fe"><button class="btn btn-s" onclick="closeEdit()">Cancelar</button><button class="btn btn-gn" onclick="saveEdit(\''+cid+'\')">💾 Guardar cambios</button></div></div>';
+  document.body.appendChild(ov);
+}
+var editPdfData='',editPdfName='';
+function handlePDFEdit(inp){
+  var f=inp.files[0];if(!f)return;
+  if(f.size>5*1024*1024){toast('Supera 5MB','twarn');return;}
+  editPdfName=f.name;
+  var reader=new FileReader();
+  reader.onload=function(e){
+    editPdfData=e.target.result;
+    document.getElementById('edit_pdf_preview').innerHTML='<div class="file-attached">📄 <strong>'+esc(editPdfName)+'</strong> — listo para guardar</div>';
+  };
+  reader.readAsDataURL(f);
+}
+function closeEdit(){var el=document.getElementById('edit-modal');if(el)el.remove();editPdfData='';editPdfName='';}
+function calcTE(){
+  var p=parseInt((document.getElementById('e_pp')||{}).value)||0;
+  var o=parseInt((document.getElementById('e_po')||{}).value)||0;
+  var el=document.getElementById('e_pt');if(el)el.value=p+o;
+}
+function gvE(id){return (document.getElementById(id)||{}).value||'';}
+function saveEdit(cid){
+  var idx=DB.c.findIndex(function(c){return c.id===cid;});if(idx<0)return;
+  var pp=parseInt(gvE('e_pp'))||0,po=parseInt(gvE('e_po'))||0;
+  var co=DB.c[idx];
+  co.name=gvE('e_name');co.addr=gvE('e_addr');co.legal=gvE('e_legal');
+  co.arl=gvE('e_arl');co.arl_pol=gvE('e_arl_pol');co.arl_tel=gvE('e_arl_tel');
+  co.arl_asesor=gvE('e_arl_asesor');co.arl_email=gvE('e_arl_email');
+  co.cd=gvE('e_cd');co.cdp=gvE('e_cdp');co.cde=gvE('e_cde');
+  co.el=gvE('e_el');co.elp=gvE('e_elp');co.ele=gvE('e_ele');
+  co.sl=gvE('e_sl');co.slp=gvE('e_slp');co.sle=gvE('e_sle');
+  co.pp=pp;co.po=po;co.pt=pp+po;
+  co.emerg=gvE('e_em');co.apoyo_mutuo=gvE('e_apf');co.apoyo_humano=gvE('e_aph');
+  if(editPdfData){co.acuerdo_pdf=editPdfData;co.acuerdo_nombre=editPdfName;}
+  DB.save();closeEdit();editPdfData='';editPdfName='';
+  toast('Empresa actualizada','tok');render();
+}
+
+/* ══════════════ ACTIVITIES - segmented ══════════════ */
+function allActs(){
+  var sts=['Programada','En ejecución','Completada','Cancelada'];
+  var scards=sts.map(function(s){var n=DB.a.filter(function(a){return a.st===s;}).length;return '<div class="sc"><div class="sl2">'+s+'</div><div class="sv">'+n+'</div><div class="ss">actividades</div></div>';}).join('');
+  /* segment tabs: All + one per company */
+  var tabs='<button class="seg-tab'+(ACT_SEG==='all'?' on':'')+'" onclick="segActs(\'all\')">📋 Todas</button>';
+  DB.c.forEach(function(c){tabs+='<button class="seg-tab'+(ACT_SEG===c.id?' on':'')+'" onclick="segActs(\''+c.id+'\')">'+c.name.charAt(0)+' '+c.name+'</button>';});
+  var filtered=ACT_SEG==='all'?DB.a:DB.a.filter(function(a){return a.cid===ACT_SEG;});
+  var rows=filtered.map(function(a){
+    var co=DB.c.find(function(c){return c.id===a.cid;})||{};
+    return '<tr><td><strong>'+a.act+'</strong></td><td><span style="color:var(--steel);cursor:pointer" onclick="go(\'detail\',\''+a.cid+'\')">'+co.name+'</span></td><td>'+a.resp+'</td><td>'+a.date+'</td><td style="text-align:center;font-weight:600;color:var(--steel)">'+a.pers+'</td><td>'+tag(a.st)+'</td>'+
+    '<td><div class="acell"><button class="btn btn-o sm" onclick="prevPDF(\''+a.id+'\')">👁 PDF</button><button class="btn sm btn-s" onclick="reqPin(\'editA\',\''+a.id+'\',\''+a.cid+'\')">✏️</button></div></td></tr>';
+  }).join('');
+  return '<div class="ph"><h1>Actividades</h1><p>Segmentadas por empresa · Requiere PIN para editar</p></div>'+
+  '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px">'+scards+'</div>'+
+  '<div class="card">'+
+  '<div class="ch"><div class="ci ci-g">📅</div><h2>Actividades registradas</h2></div>'+
+  '<div class="seg-tabs">'+tabs+'</div>'+
+  (rows?'<div style="overflow-x:auto"><table class="at"><thead><tr><th>Actividad</th><th>Empresa</th><th>Responsable</th><th>Fecha</th><th>Asist.</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>'+rows+'</tbody></table></div>':'<div class="empty"><div class="icon">📋</div><p>Sin actividades para este filtro.</p></div>')+
+  '</div>';
+}
+function segActs(seg){ACT_SEG=seg;render();}
+
+/* ══════════════ ACTIVITY MODAL ══════════════ */
+function openAM(cid,aid){
+  EA=aid?DB.a.find(function(a){return a.id===aid;}):null;
+  var co=DB.c.find(function(c){return c.id===cid;})||{};
+  var a=EA||{};
+  function sel(v,opt){return v===opt?' selected':'';}
+  var ov=document.createElement('div');ov.className='ov';ov.id='am';
+  ov.onclick=function(e){if(e.target===ov)closeM();};
+  ov.innerHTML='<div class="mb"><div class="mh"><div><h2>'+(EA?'Editar actividad':'Nueva actividad')+'</h2><p>'+esc(co.name)+'</p></div><button class="mc" onclick="closeM()">✕</button></div>'+
+  '<div class="g2"><div class="fg gf"><label>Actividad *</label><input id="ma_act" value="'+esc(a.act||'')+'"></div>'+
+  '<div class="fg gf"><label>Objetivo</label><textarea id="ma_obj">'+esc(a.obj||'')+'</textarea></div>'+
+  '<div class="fg"><label>Responsable</label><input id="ma_resp" value="'+esc(a.resp||'')+'"></div>'+
+  '<div class="fg"><label>Fecha</label><input id="ma_date" type="date" value="'+(a.date||'')+'"></div>'+
+  '<div class="fg"><label>N° Asistentes</label><input id="ma_pers" type="number" value="'+(a.pers||'')+'" min="0"></div>'+
+  '<div class="fg"><label>Estado</label><select id="ma_st"><option value="Programada"'+sel(a.st,'Programada')+'>Programada</option><option value="En ejecución"'+sel(a.st,'En ejecución')+'>En ejecución</option><option value="Completada"'+sel(a.st,'Completada')+'>Completada</option><option value="Cancelada"'+sel(a.st,'Cancelada')+'>Cancelada</option></select></div></div>'+
+  '<div class="fe"><button class="btn btn-s" onclick="closeM()">Cancelar</button><button class="btn btn-p" onclick="saveA(\''+cid+'\')">💾 Guardar</button></div></div>';
+  document.body.appendChild(ov);
+}
+function closeM(){['am','pm'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});EA=null;}
+function saveA(cid){
+  var act=gv('ma_act');if(!act.trim()){toast('Nombre obligatorio');return;}
+  var o={id:EA?EA.id:'a'+Date.now(),cid:cid,act:act,obj:gv('ma_obj'),resp:gv('ma_resp'),date:gv('ma_date'),pers:parseInt(gv('ma_pers'))||0,st:gv('ma_st')};
+  if(EA){var i=DB.a.findIndex(function(a){return a.id===EA.id;});DB.a[i]=o;toast('Actualizada','tok');}
+  else{DB.a.push(o);toast('Registrada','tok');}
+  DB.save();closeM();render();
+}
+
+/* ══════════════ ACTAS ══════════════ */
+function actaCardHtml(ac){
+  var emps=ac.empresas?ac.empresas.map(function(eid){var co=DB.c.find(function(c){return c.id===eid;});return co?co.name:'';}).filter(Boolean).join(', '):'Todas';
+  return '<div class="acta-card" onclick="go(\'acta-detail\',\''+ac.id+'\')">'+
+  '<div class="acta-av">📋</div>'+
+  '<div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--navy)"><span class="consec">'+(ac.consec||'')+'</span>'+ac.tipo+'</div>'+
+  '<div style="font-size:12px;color:var(--muted);margin-top:3px">'+ac.fecha+' · '+ac.modalidad+' · '+ac.lugar+'</div>'+
+  '<div style="font-size:12px;color:var(--steel);margin-top:2px">'+emps+'</div></div>'+
+  '<div style="text-align:right;flex-shrink:0"><div class="cbadge">'+ac.asistentes.length+' asistentes</div><div style="font-size:11px;color:var(--light);margin-top:4px">'+ac.compromisos.length+' compromisos</div></div></div>';
+}
+function actas(){
+  return '<div class="ph"><h1>Actas de reunión CAM</h1><p>Consecutivo automático · Clave de administración requerida para editar o eliminar</p></div>'+
+  '<div class="tbar"><button class="btn btn-gn" onclick="go(\'new-acta\')">📋 Nueva Acta</button><span style="color:var(--muted);font-size:13px">'+DB.actas.length+' actas · Próximo: <strong>'+nextConsec()+'</strong></span></div>'+
+  (DB.actas.length?'<div>'+DB.actas.slice().reverse().map(actaCardHtml).join('')+'</div>':'<div class="empty"><div class="icon">📋</div><p>Sin actas.</p></div>');
+}
+
+/* ══════════════ NEW ACTA FORM ══════════════ */
+function newActaForm(){
+  var consec=nextConsec();
+  var coOpts=DB.c.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('');
+  return '<div class="ph"><h1>📋 Nueva Acta de Reunión</h1><p>Consecutivo: <strong>'+consec+'</strong></p></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-n">📌</div><h2>Datos generales</h2></div>'+
+  '<div class="g2">'+
+  '<div class="fg"><label>Tipo de reunión *</label><select id="ac_tipo"><option value="">Seleccione...</option><option>Reunión ordinaria CAM</option><option>Reunión extraordinaria CAM</option><option>Simulacro conjunto</option><option>Capacitación CAM</option><option>Revisión PEC</option><option>Comité de emergencias</option></select></div>'+
+  '<div class="fg"><label>Modalidad</label><div class="mod-toggle"><button class="mod-btn act" id="mod_p" onclick="setMod(\'Presencial\')">🏢 Presencial</button><button class="mod-btn" id="mod_v" onclick="setMod(\'Virtual\')">💻 Virtual</button></div></div>'+
+  '<div class="fg"><label>Fecha *</label><input id="ac_fecha" type="date"></div>'+
+  '<div class="fg"><label>Hora inicio</label><input id="ac_hi" type="time"></div>'+
+  '<div class="fg"><label>Hora finalización</label><input id="ac_hf" type="time"></div>'+
+  '<div class="fg gf"><label>Lugar / Enlace</label><input id="ac_lugar" placeholder="Sala de juntas / meet.google.com/..."></div>'+
+  '<div class="fg gf"><label>Objetivo</label><textarea id="ac_obj" placeholder="Objetivo principal de la reunión..."></textarea></div>'+
+  '</div>'+
+  '<div class="sl-blue">🏢 Empresas participantes</div>'+
+  '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">'+
+  DB.c.map(function(c){return '<label style="display:flex;align-items:center;gap:8px;background:var(--surface);padding:10px 12px;border-radius:var(--r);border:1px solid var(--border);cursor:pointer;font-size:13px"><input type="checkbox" name="emp_chk" value="'+c.id+'" style="width:auto"> '+esc(c.name)+'</label>';}).join('')+
+  '</div></div>'+
+  '<div class="card"><div class="acta-sec"><div class="num">1</div>ASISTENTES</div>'+
+  '<div style="overflow-x:auto"><table class="acta-tbl"><thead><tr><th>Nombre</th><th>Cargo</th><th>Empresa</th><th style="width:38px"></th></tr></thead>'+
+  '<tbody id="asi_body">'+rowAsi(coOpts)+'</tbody></table></div>'+
+  '<button class="add-btn-gn" onclick="addAsi()">+ Agregar Asistente</button></div>'+
+  '<div class="card"><div class="acta-sec"><div class="num">2</div>AGENDA Y DESARROLLO</div>'+
+  '<div style="overflow-x:auto"><table class="acta-tbl"><thead><tr><th style="width:34px">N°</th><th style="width:170px">Tema</th><th>Desarrollo</th><th style="width:38px"></th></tr></thead>'+
+  '<tbody id="ag_body">'+rowAg(1)+'</tbody></table></div>'+
+  '<button class="add-btn-gn" onclick="addAg()">+ Agregar Punto</button></div>'+
+  '<div class="card"><div class="acta-sec"><div class="num">3</div>COMPROMISOS Y TAREAS</div>'+
+  '<div style="overflow-x:auto"><table class="acta-tbl"><thead><tr><th>Compromiso</th><th style="width:140px">Responsable</th><th style="width:105px">Fecha límite</th><th style="width:95px">Estado</th><th style="width:38px"></th></tr></thead>'+
+  '<tbody id="comp_body">'+rowComp()+'</tbody></table></div>'+
+  '<button class="add-btn-gn" onclick="addComp()">+ Agregar Compromiso</button></div>'+
+  '<div class="fe"><button class="btn btn-s" onclick="go(\'actas\')">Cancelar</button>'+
+  '<button class="btn btn-st" onclick="prevActa()">👁 Vista Previa PDF</button>'+
+  '<button class="btn btn-gn" onclick="saveActa()">💾 Guardar Acta</button></div>';
+}
+
+var INP='style="width:100%;background:transparent;border:none;outline:none;font-family:inherit;font-size:13px;padding:2px"';
+var SEL='style="background:transparent;border:none;outline:none;font-family:inherit;font-size:13px"';
+function rowAsi(coOpts){return '<tr><td><input name="as_n" placeholder="Nombre" '+INP+'></td><td><input name="as_c" placeholder="Cargo" '+INP+'></td><td><select name="as_e" '+SEL+'><option value="">— Empresa —</option>'+coOpts+'</select></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td></tr>';}
+function rowAg(n){return '<tr><td style="color:var(--muted);font-weight:700;text-align:center">'+n+'</td><td><input name="ag_t" placeholder="Tema" '+INP+'></td><td><textarea name="ag_d" placeholder="Desarrollo..." '+INP+' style="resize:none;min-height:44px"></textarea></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove();renum()">✕</button></td></tr>';}
+function rowComp(){return '<tr><td><input name="co_d" placeholder="Compromiso..." '+INP+'></td><td><input name="co_r" placeholder="Responsable" '+INP+'></td><td><input name="co_f" type="date" '+INP+'></td><td><select name="co_s" '+SEL+'><option>Pendiente</option><option>En proceso</option><option>Completado</option></select></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td></tr>';}
+
+function setMod(m){MOD=m;document.getElementById('mod_p').className='mod-btn'+(m==='Presencial'?' act':'');document.getElementById('mod_v').className='mod-btn'+(m==='Virtual'?' act':'');}
+function addAsi(){var coOpts=DB.c.map(function(c){return '<option value="'+c.id+'">'+esc(c.name)+'</option>';}).join('');var tr=document.createElement('tr');tr.innerHTML=rowAsi(coOpts);document.getElementById('asi_body').appendChild(tr);}
+function addAg(){var n=document.getElementById('ag_body').children.length+1;var tr=document.createElement('tr');tr.innerHTML=rowAg(n);document.getElementById('ag_body').appendChild(tr);}
+function renum(){document.getElementById('ag_body').querySelectorAll('tr').forEach(function(r,i){var td=r.querySelector('td');if(td)td.textContent=i+1;});}
+function addComp(){var tr=document.createElement('tr');tr.innerHTML=rowComp();document.getElementById('comp_body').appendChild(tr);}
+function getActaData(){
+  var emps=[];document.querySelectorAll('[name=emp_chk]:checked').forEach(function(cb){emps.push(cb.value);});
+  var asis=[];document.querySelectorAll('#asi_body tr').forEach(function(r){asis.push({n:r.querySelector('[name=as_n]').value,cargo:r.querySelector('[name=as_c]').value,eid:r.querySelector('[name=as_e]').value});});
+  var ag=[];document.querySelectorAll('#ag_body tr').forEach(function(r){ag.push({tema:r.querySelector('[name=ag_t]').value,des:r.querySelector('[name=ag_d]').value});});
+  var comp=[];document.querySelectorAll('#comp_body tr').forEach(function(r){comp.push({desc:r.querySelector('[name=co_d]').value,resp:r.querySelector('[name=co_r]').value,fecha:r.querySelector('[name=co_f]').value,st:r.querySelector('[name=co_s]').value});});
+  return {tipo:gv('ac_tipo'),modalidad:MOD,fecha:gv('ac_fecha'),hi:gv('ac_hi'),hf:gv('ac_hf'),lugar:gv('ac_lugar'),objetivo:gv('ac_obj'),empresas:emps,asistentes:asis,agenda:ag,compromisos:comp};
+}
+function saveActa(){
+  var d=getActaData();
+  if(!d.tipo){toast('Seleccione el tipo','twarn');return;}
+  if(!d.fecha){toast('La fecha es obligatoria','twarn');return;}
+  d.id='ac'+Date.now();d.consec=nextConsec();
+  DB.actas.push(d);DB.save();toast(d.consec+' guardada','tok');go('actas');
+}
+function prevActa(){openActaPDF(getActaData());}
+
+/* ══════════════ ACTA DETAIL ══════════════ */
+function actaDetail(){
+  var ac=DB.actas.find(function(a){return a.id===ACTA_ID;});
+  if(!ac)return '<div class="empty"><p>No encontrada.</p></div>';
+  var emps=ac.empresas?ac.empresas.map(function(eid){var co=DB.c.find(function(c){return c.id===eid;});return co?co.name:'';}).filter(Boolean).join(', '):'—';
+  var asiRows=ac.asistentes.map(function(a,i){var co=DB.c.find(function(c){return c.id===a.eid;})||{};return '<tr><td style="color:var(--muted);text-align:center">'+(i+1)+'</td><td><strong>'+a.n+'</strong></td><td>'+a.cargo+'</td><td style="color:var(--steel)">'+co.name+'</td></tr>';}).join('');
+  var agRows=ac.agenda.map(function(ag,i){return '<tr><td style="color:var(--muted);font-weight:700;text-align:center">'+(i+1)+'</td><td><strong>'+ag.tema+'</strong></td><td>'+ag.des+'</td></tr>';}).join('');
+  var compRows=ac.compromisos.map(function(c){return '<tr><td>'+c.desc+'</td><td>'+c.resp+'</td><td>'+c.fecha+'</td><td>'+tag(c.st,ATAGS)+'</td></tr>';}).join('');
+  return '<button class="back" onclick="go(\'actas\')">← Volver</button>'+
+  '<div class="ebox"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px">'+
+  '<div><div style="font-size:10px;font-weight:700;color:#9aaec1;text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px"><span class="consec">'+(ac.consec||'')+'</span> Acta · CAM Pasadena</div>'+
+  '<div style="font-size:20px;font-weight:700;color:#fff;margin-bottom:5px">'+ac.tipo+'</div>'+
+  '<div style="font-size:13px;color:#9aaec1">📅 '+ac.fecha+' · '+ac.modalidad+' · ⏰ '+ac.hi+' – '+ac.hf+'</div>'+
+  '<div style="font-size:13px;color:#9aaec1;margin-top:2px">📍 '+ac.lugar+'</div>'+
+  '<div style="font-size:13px;color:#9aaec1;margin-top:2px">🏢 '+emps+'</div></div>'+
+  '<div style="display:flex;gap:8px;flex-shrink:0">'+
+  '<button class="btn btn-st sm" onclick="openActaPDF(DB.actas.find(function(a){return a.id===\''+ac.id+'\';}))">📄 PDF</button>'+
+  '<button class="btn btn-d sm" onclick="reqPin(\'delActa\',\''+ac.id+'\')">🗑 Eliminar</button>'+
+  '</div></div>'+
+  (ac.objetivo?'<div style="margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.1)"><div style="font-size:11px;font-weight:700;color:#9aaec1;text-transform:uppercase;margin-bottom:5px">Objetivo</div><div style="font-size:13px;color:#e8ecf5">'+ac.objetivo+'</div></div>':'')+'</div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-b">👥</div><h2>Asistentes ('+ac.asistentes.length+')</h2></div>'+(asiRows?'<div style="overflow-x:auto"><table class="at"><thead><tr><th>#</th><th>Nombre</th><th>Cargo</th><th>Empresa</th></tr></thead><tbody>'+asiRows+'</tbody></table></div>':'<div class="empty"><p>Sin asistentes.</p></div>')+'</div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-n">📝</div><h2>Agenda y desarrollo</h2></div>'+(agRows?'<div style="overflow-x:auto"><table class="at"><thead><tr><th>N°</th><th>Tema</th><th>Desarrollo</th></tr></thead><tbody>'+agRows+'</tbody></table></div>':'<div class="empty"><p>Sin agenda.</p></div>')+'</div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-r">✅</div><h2>Compromisos y tareas</h2></div>'+(compRows?'<div style="overflow-x:auto"><table class="at"><thead><tr><th>Compromiso</th><th>Responsable</th><th>Fecha límite</th><th>Estado</th></tr></thead><tbody>'+compRows+'</tbody></table></div>':'<div class="empty"><p>Sin compromisos.</p></div>')+'</div>';
+}
+
+/* ══════════════ MAPA VIEW ══════════════ */
+var MAP_INSTANCE = null;
+var HOME_MAP_INSTANCE = null;
+
+/* Bogotá center coords */
+var BOGOTA = [4.710989, -74.072092];
+
+/* Known Bogotá address geocoding table — returns approx lat/lng */
+function geocodeAddr(addr) {
+  /* Try to return a rough Bogotá coordinate based on address keywords */
+  var zones = [
+    {kw:['pasadena','calle 102','cll 102','cl 102'], lat:4.6970, lng:-74.0560},
+    {kw:['cra 15','carrera 15','kr 15'], lat:4.6850, lng:-74.0460},
+    {kw:['calle 80','cl 80','cll 80','av. calle 80'], lat:4.6980, lng:-74.1040},
+    {kw:['calle 127','cl 127','cll 127'], lat:4.7020, lng:-74.0480},
+    {kw:['suba','calle 145','cl 145'], lat:4.7420, lng:-74.0920},
+    {kw:['chapinero','cra 9','carrera 9'], lat:4.6490, lng:-74.0580},
+    {kw:['usaquen','calle 116','cl 116'], lat:4.6950, lng:-74.0310},
+    {kw:['fontibon','av. calle 13','zona industrial'], lat:4.6610, lng:-74.1330},
+    {kw:['kennedy','calle 38 sur','americas'], lat:4.6280, lng:-74.1500},
+    {kw:['bosa','soacha'], lat:4.5980, lng:-74.1870},
+    {kw:['engativa','av 68','avenida 68'], lat:4.7020, lng:-74.1040},
+    {kw:['teusaquillo','palermo','quinta paredes'], lat:4.6430, lng:-74.0820},
+    {kw:['santa barbara','unicentro','calle 127'], lat:4.7010, lng:-74.0450},
+    {kw:['restrepo','calle 17 sur'], lat:4.5880, lng:-74.1020},
+    {kw:['centro','candelaria','bolivar'], lat:4.5981, lng:-74.0762},
+    {kw:['modelia','normandia','avenida 40'], lat:4.6810, lng:-74.1160},
+    {kw:['chico','rosales','cra 7','carrera 7'], lat:4.6590, lng:-74.0530},
+    {kw:['alhambra','pontevedra','calle 127'], lat:4.7010, lng:-74.0590},
+    {kw:['tabora','calle 80','bodega'], lat:4.6880, lng:-74.1020},
+  ];
+  var a = addr.toLowerCase();
+  for(var i=0;i<zones.length;i++){
+    var z=zones[i];
+    for(var j=0;j<z.kw.length;j++){
+      if(a.indexOf(z.kw[j])>=0){
+        /* add tiny random offset so markers dont overlap exactly */
+        return [z.lat + (Math.random()-0.5)*0.004, z.lng + (Math.random()-0.5)*0.004];
+      }
+    }
+  }
+  /* default: Bogotá center with random offset */
+  return [BOGOTA[0]+(Math.random()-0.5)*0.02, BOGOTA[1]+(Math.random()-0.5)*0.02];
+}
+
+function mapaView(){
+  return '<div class="ph"><h1>🗺 Mapa de empresas vinculadas</h1><p>Ubicación geográfica de las organizaciones registradas en el CAM Pasadena · Bogotá</p></div>'+
+  '<div class="card" style="padding:0;overflow:hidden">'+
+  '<div style="padding:16px 20px 12px;border-bottom:1px solid var(--surface2);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">'+
+  '<div style="display:flex;align-items:center;gap:10px">'+
+  '<div class="ci ci-b" style="font-size:16px">🏢</div>'+
+  '<div><div style="font-size:15px;font-weight:600;color:var(--navy)">'+DB.c.length+' empresa'+(DB.c.length!==1?'s':'')+' registrada'+(DB.c.length!==1?'s':'')+' en el CAM</div>'+
+  '<div style="font-size:12px;color:var(--muted)">Clic en un marcador para ver detalles · Zona: Bogotá, Colombia</div></div></div>'+
+  '<div style="display:flex;gap:8px">'+
+  '<button class="btn btn-s sm" onclick="resetMapView()">🎯 Centrar mapa</button>'+
+  '<button class="btn btn-p sm" onclick="go(\'register\')">+ Registrar empresa</button>'+
+  '</div></div>'+
+  '<div id="cam-map" style="height:500px;border-radius:0 0 var(--rl) var(--rl)"></div>'+
+  '</div>'+
+  /* Legend + company list side by side */
+  '<div class="d2" style="margin-top:14px">'+
+  '<div class="card"><div class="ch"><div class="ci ci-b">📍</div><h2>Empresas en el mapa</h2></div>'+
+  '<div style="display:flex;flex-direction:column;gap:8px">'+
+  DB.c.map(function(c,i){
+    var n=DB.a.filter(function(a){return a.cid===c.id;}).length;
+    var colors=['#c0392b','#2980b9','#1a7a4a','#d4ac0d','#8e44ad','#e67e22','#16a085','#2c3e50'];
+    var col=colors[i%colors.length];
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border-radius:var(--r);cursor:pointer" onclick="flyToCompany(\''+c.id+'\')">'+
+    '<div style="width:14px;height:14px;border-radius:50%;background:'+col+';flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>'+
+    '<div style="flex:1"><div style="font-size:13px;font-weight:600;color:var(--navy)">'+c.name+'</div>'+
+    '<div style="font-size:11px;color:var(--muted)">'+c.addr+'</div></div>'+
+    '<div class="cbadge">'+n+' act.</div></div>';
+  }).join('')+
+  '</div></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-r">🚨</div><h2>Emergencias cercanas</h2></div>'+
+  '<div style="display:flex;flex-direction:column;gap:6px;font-size:13px">'+
+  '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--surface2)"><span>🏥 Clínica Shaio</span><span style="color:var(--steel);font-weight:600">+57 601 5938210</span></div>'+
+  '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--surface2)"><span>🏥 Clínica Reina Sofía</span><span style="color:var(--steel);font-weight:600">+57 601 6252111</span></div>'+
+  '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--surface2)"><span>🚒 Bomberos B-12 Suba</span><span style="color:var(--accent);font-weight:600">+57 1 3822500</span></div>'+
+  '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--surface2)"><span>👮 CAI Pasadena</span><span style="color:var(--navy);font-weight:600">123 · 112</span></div>'+
+  '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--surface2)"><span>🆘 Línea única emergencias</span><span style="color:var(--accent);font-weight:700;font-size:15px">123</span></div>'+
+  '<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--surface2)"><span>🚑 Ambulancias Bogotá</span><span style="color:var(--accent);font-weight:700;font-size:15px">125</span></div>'+
+  '<div style="display:flex;justify-content:space-between;padding:7px 0"><span>🔥 Bomberos Bogotá</span><span style="color:var(--accent);font-weight:700;font-size:15px">119</span></div>'+
+  '</div></div>'+
+  '</div>';
+}
+
+var MAP_MARKERS = {}; /* id -> marker */
+
+function initMap(){
+  setTimeout(function(){
+    var el=document.getElementById('cam-map');
+    if(!el)return;
+    if(MAP_INSTANCE){MAP_INSTANCE.remove();MAP_INSTANCE=null;}
+    MAP_INSTANCE=L.map('cam-map',{zoomControl:true,scrollWheelZoom:true}).setView(BOGOTA,12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+      attribution:'© <a href="https://openstreetmap.org">OpenStreetMap</a> contributors',
+      maxZoom:19
+    }).addTo(MAP_INSTANCE);
+    /* Add CAM Pasadena HQ marker */
+    var camIcon=L.divIcon({className:'',html:'<div style="background:#0d1b30;color:#fff;border:3px solid #c0392b;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,.4)">🏛</div>',iconSize:[36,36],iconAnchor:[18,18]});
+    L.marker([4.6970,-74.0560],{icon:camIcon}).addTo(MAP_INSTANCE)
+      .bindPopup('<div style="font-family:IBM Plex Sans,sans-serif"><div style="font-weight:700;color:#0d1b30;font-size:13px;margin-bottom:3px">📍 CAM Pasadena</div><div style="font-size:12px;color:#6b7a99">Comité de Ayuda Mutua<br>Sector Pasadena · Bogotá</div></div>');
+    /* Add company markers */
+    var colors=['#c0392b','#2980b9','#1a7a4a','#d4ac0d','#8e44ad','#e67e22','#16a085','#2c3e50'];
+    MAP_MARKERS={};
+    DB.c.forEach(function(c,i){
+      var coords=geocodeAddr(c.addr);
+      var col=colors[i%colors.length];
+      var n=DB.a.filter(function(a){return a.cid===c.id;}).length;
+      var icon=L.divIcon({className:'',
+        html:'<div style="background:'+col+';color:#fff;border:3px solid #fff;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 10px rgba(0,0,0,.35);font-weight:700">'+c.name.charAt(0)+'</div>',
+        iconSize:[38,38],iconAnchor:[19,19],popupAnchor:[0,-20]});
+      var popup='<div style="font-family:IBM Plex Sans,sans-serif;min-width:200px">'+
+        '<div class="map-marker-label">'+c.name+'</div>'+
+        '<div class="map-marker-addr">📍 '+c.addr+'</div>'+
+        (c.arl?'<div style="font-size:11px;color:#6b7a99;margin-bottom:5px">🏥 ARL: <strong>'+c.arl+'</strong></div>':'')+
+        '<div style="font-size:11px;color:#6b7a99;margin-bottom:8px">👥 '+c.pt+' personas · '+n+' actividades</div>'+
+        '<button class="map-marker-btn" onclick="closePop();go(\'detail\',\''+c.id+'\')">Ver ficha completa →</button>'+
+        '</div>';
+      var marker=L.marker(coords,{icon:icon}).addTo(MAP_INSTANCE).bindPopup(popup,{maxWidth:260});
+      MAP_MARKERS[c.id]=marker;
+    });
+    /* Also add emergency reference points */
+    var emPoints=[
+      {name:'🏥 Clínica Shaio',coords:[4.7028,-74.0840],col:'#e74c3c'},
+      {name:'🏥 Clínica Reina Sofía',coords:[4.7095,-74.0490],col:'#e74c3c'},
+      {name:'🚒 Bomberos B-12 Suba',coords:[4.7400,-74.0900],col:'#e67e22'},
+      {name:'👮 CAI Pasadena',coords:[4.6965,-74.0555],col:'#2980b9'},
+    ];
+    emPoints.forEach(function(p){
+      var ic=L.divIcon({className:'',
+        html:'<div style="background:'+p.col+';border:2px solid #fff;border-radius:4px;padding:2px 5px;font-size:10px;color:#fff;white-space:nowrap;box-shadow:0 1px 6px rgba(0,0,0,.3);font-weight:700">'+p.name+'</div>',
+        iconSize:[null,null],iconAnchor:[0,0]});
+      L.marker(p.coords,{icon:ic,interactive:false}).addTo(MAP_INSTANCE);
+    });
+    MAP_INSTANCE.invalidateSize();
+    /* Also init home map if it exists */
+    initHomeMap();
+  },300);
+}
+
+function initHomeMap(){
+  var el=document.getElementById('cam-map-home');
+  if(!el)return;
+  if(HOME_MAP_INSTANCE){HOME_MAP_INSTANCE.remove();HOME_MAP_INSTANCE=null;}
+  HOME_MAP_INSTANCE=L.map('cam-map-home',{zoomControl:false,scrollWheelZoom:false,dragging:false,doubleClickZoom:false}).setView(BOGOTA,12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap',maxZoom:18}).addTo(HOME_MAP_INSTANCE);
+  var colors=['#c0392b','#2980b9','#1a7a4a','#d4ac0d','#8e44ad','#e67e22'];
+  DB.c.forEach(function(c,i){
+    var coords=geocodeAddr(c.addr);
+    var col=colors[i%colors.length];
+    var icon=L.divIcon({className:'',
+      html:'<div style="background:'+col+';color:#fff;border:3px solid #fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.35)">'+c.name.charAt(0)+'</div>',
+      iconSize:[34,34],iconAnchor:[17,17]});
+    L.marker(coords,{icon:icon}).addTo(HOME_MAP_INSTANCE)
+      .bindPopup('<div style="font-family:IBM Plex Sans,sans-serif"><strong>'+c.name+'</strong><br><small style="color:#6b7a99">'+c.addr+'</small></div>');
+  });
+  HOME_MAP_INSTANCE.invalidateSize();
+}
+
+function flyToCompany(cid){
+  var co=DB.c.find(function(c){return c.id===cid;});
+  if(!co||!MAP_INSTANCE)return;
+  var coords=geocodeAddr(co.addr);
+  MAP_INSTANCE.flyTo(coords,15,{duration:1.2});
+  setTimeout(function(){if(MAP_MARKERS[cid])MAP_MARKERS[cid].openPopup();},1400);
+}
+
+function resetMapView(){
+  if(MAP_INSTANCE)MAP_INSTANCE.flyTo(BOGOTA,12,{duration:1});
+}
+
+function closePop(){
+  if(MAP_INSTANCE)MAP_INSTANCE.closePopup();
+}
+
+/* init home map after render */
+(function(){
+  var origRender=render;
+  render=function(){
+    origRender();
+    if(V==='home')setTimeout(initHomeMap,400);
+  };
+})();
+
+/* ══════════════ EMERGENCIA VIEW ══════════════ */
+function emergView(){
+  return '<div class="ph"><h1>🚨 Recursos de atención de emergencias</h1><p>Centros hospitalarios, bomberos, policía y líneas de emergencia cercanos al CAM Pasadena</p></div>'+
+  '<div class="em-section"><div class="em-section-title">🚑 Hospitales y Clínicas Cercanas</div>'+
+  '<div class="em-cards">'+
+  emc('Shaio Clinic','Dg. 115A #70C-75, Bogotá','+57 601 5938210','Cardiología y urgencias de alta complejidad','3.8','var(--accent-light)','var(--accent)')+
+  emc('Clínica Reina Sofía','Av. Calle 127 #20-78, Bogotá','+57 601 6252111','Urgencias y hospitalización','4.0','var(--green-bg)','var(--green)')+
+  emc('Clínica del Country','Cra. 16 #82-57, Chapinero','+57 601 3905099','Atención especializada de referencia','3.6','var(--steel-light)','var(--steel)')+
+  emc('Clínica La Colina','Cra. 72 #167-72, Bogotá','+57 601 3905355','Urgencias y hospitalización','3.4','var(--steel-light)','var(--steel)')+
+  emc('Hospital Engativá','Tv 100A #80A-50, Bogotá','+57 601 4431790','Atención hospitalaria y urgencias','2.4','var(--gold-light)','#7d600a')+
+  '</div></div>'+
+  '<div class="em-section"><div class="em-section-title">🚒 Estaciones de Bomberos</div>'+
+  '<div class="em-cards">'+
+  emc('Estación Bomberos B-12 Suba','Bogotá Norte','+57 1 3822500','Cobertura zona Suba y norte','4.6','var(--accent-light)','var(--accent)')+
+  emc('Bomberos Chapinero','Cra. 9A #61-75, Chapinero','+57 1 3485420','Cobertura zona Chapinero','4.5','#fff3e0','#e67e22')+
+  emc('Estación Central La Pepita','Calle 11 #20A-10, Bogotá','119','Estación central Bogotá','3.8','var(--steel-light)','var(--steel)')+
+  '</div></div>'+
+  '<div class="em-section"><div class="em-section-title">👮 CAI Policiales Cercanos</div>'+
+  '<div class="em-cards">'+
+  '<div class="em-card"><div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">CAI Pontevedra</div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">Zona Pontevedra · Bogotá Norte</div><div style="font-size:13px;font-weight:700;color:var(--steel)">📞 123 · 112</div></div>'+
+  '<div class="em-card"><div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">CAI Pasadena</div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">Zona Pasadena · Sector directo CAM</div><div style="font-size:13px;font-weight:700;color:var(--steel)">📞 123 · 112</div></div>'+
+  '<div class="em-card"><div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">CAI Alhambra</div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">Zona Alhambra · Bogotá Norte</div><div style="font-size:13px;font-weight:700;color:var(--steel)">📞 123 · 112</div></div>'+
+  '<div class="em-card"><div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px">CAI Andes Norte</div><div style="font-size:12px;color:var(--muted);margin-bottom:5px">Zona Andes Norte · Bogotá</div><div style="font-size:13px;font-weight:700;color:var(--steel)">📞 123 · 112</div></div>'+
+  '</div></div>'+
+  '<div class="card"><div class="ch"><div class="ci ci-r">📞</div><h2>Números de emergencia recomendados</h2></div>'+
+  '<table class="em-num-table">'+
+  '<tr><td>Línea Única de Emergencias</td><td class="num">123</td></tr>'+
+  '<tr><td>Policía Nacional</td><td class="num">112</td></tr>'+
+  '<tr><td>Bomberos Bogotá</td><td class="num">119</td></tr>'+
+  '<tr><td>Cruz Roja Colombiana</td><td class="num">132</td></tr>'+
+  '<tr><td>Defensa Civil</td><td class="num">144</td></tr>'+
+  '<tr><td>Ambulancias Bogotá</td><td class="num">125</td></tr>'+
+  '</table></div>';
+}
+function emc(name,addr,phone,spec,rate,bgc,tc){
+  return '<div class="em-card">'+
+  '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:5px">'+
+  '<div style="font-size:13px;font-weight:700;color:var(--navy)">'+name+'</div>'+
+  '<div style="background:'+bgc+';color:'+tc+';font-size:10px;font-weight:700;padding:2px 7px;border-radius:3px">⭐ '+rate+'</div></div>'+
+  '<div style="font-size:12px;color:var(--muted);margin-bottom:5px">📍 '+addr+'</div>'+
+  '<div style="font-size:13px;font-weight:600;color:var(--steel)">📞 '+phone+'</div>'+
+  '<div style="font-size:11px;color:var(--green);margin-top:4px">🕐 24 horas</div>'+
+  '<div style="font-size:11px;color:var(--muted);margin-top:3px;font-style:italic">'+spec+'</div>'+
+  '</div>';
+}
+
+/* ══════════════ ACTA PDF ══════════════ */
+function openActaPDF(ac){
+  if(!ac){toast('Sin datos');return;}
+  var emps=ac.empresas?ac.empresas.map(function(eid){var co=DB.c.find(function(c){return c.id===eid;});return co?co.name:'';}).filter(Boolean).join(', '):'Todas las empresas';
+  var consec=ac.consec||nextConsec();
+  var today=new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  var asiRows=ac.asistentes.map(function(a,i){var co=DB.c.find(function(c){return c.id===a.eid;})||{};return '<tr><td style="text-align:center;color:#6b7a99">'+(i+1)+'</td><td>'+a.n+'</td><td>'+a.cargo+'</td><td>'+co.name+'</td><td style="min-width:80px">&nbsp;</td></tr>';}).join('');
+  var agRows=ac.agenda.map(function(ag,i){return '<tr><td style="text-align:center;color:#6b7a99;font-weight:700">'+(i+1)+'</td><td style="font-weight:600">'+ag.tema+'</td><td>'+ag.des+'</td></tr>';}).join('');
+  var compRows=ac.compromisos.map(function(c){var stc={Pendiente:'background:#fdecea;color:#c0392b','En proceso':'background:#fef9e7;color:#d4ac0d',Completado:'background:#e8f7ef;color:#1a7a4a'};return '<tr><td>'+c.desc+'</td><td>'+c.resp+'</td><td>'+c.fecha+'</td><td><span style="'+(stc[c.st]||'background:#eaecf0;color:#6b7a99')+';padding:3px 8px;border-radius:3px;font-size:11px;font-weight:700">'+c.st+'</span></td></tr>';}).join('');
+  var w=window.open('','_blank');
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+consec+'</title>'+
+  '<style>@page{margin:14mm}body{font-family:Arial,sans-serif;font-size:13px;color:#1a2c4e;margin:0}'+
+  '.hdr{background:#0d1b30;padding:15px 22px;display:flex;justify-content:space-between;align-items:center}'+
+  '.hdr h1{font-size:15px;font-weight:700;color:#fff;margin:0}.hdr p{font-size:10px;color:#9aaec1;margin:3px 0 0}'+
+  '.ck{background:#c0392b;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:3px;font-family:monospace}'+
+  '.bar{height:4px;background:#c0392b}.body{padding:20px}'+
+  '.title{font-size:19px;font-weight:700;color:#1a2c4e}.meta{font-size:12px;color:#6b7a99;margin-top:3px}'+
+  '.bar2{height:3px;background:#c0392b;border-radius:2px;margin:10px 0 14px}'+
+  '.sec{background:linear-gradient(90deg,#1a2c4e 0%,#243558 100%);color:#fff;padding:8px 13px;border-radius:4px;display:flex;align-items:center;gap:8px;margin:14px 0 9px;font-size:12px;font-weight:700}'+
+  '.sec .n{background:#1a7a4a;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}'+
+  'table{width:100%;border-collapse:collapse;font-size:12px}th{background:#1a2c4e;color:#fff;padding:7px 9px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.04em}td{padding:7px 9px;border-bottom:1px solid #eaecf0;vertical-align:top}tr:nth-child(even) td{background:#f9fafb}'+
+  '.ob{background:#f4f6f9;border-left:4px solid #c0392b;padding:9px 13px;border-radius:0 4px 4px 0;font-size:13px;margin-bottom:4px}'+
+  '.ftr{background:#0d1b30;color:#9aaec1;text-align:center;font-size:10px;padding:9px;margin-top:24px}'+
+  '.np{text-align:center;margin:16px 0}@media print{.np{display:none}}'+
+  '</style></head><body>'+
+  '<div class="hdr"><div><h1>COMITÉ DE AYUDA MUTUA PASADENA</h1><p>Sistema de Gestión de Emergencias · HSEQ</p></div><div class="ck">'+consec+'</div></div>'+
+  '<div class="bar"></div>'+
+  '<div class="body">'+
+  '<div class="title">'+ac.tipo+'</div>'+
+  '<div class="meta">📅 '+ac.fecha+' &nbsp;|&nbsp; '+ac.modalidad+' &nbsp;|&nbsp; ⏰ '+ac.hi+' – '+ac.hf+'</div>'+
+  '<div class="meta">📍 '+ac.lugar+'</div>'+
+  '<div class="meta">🏢 '+emps+'</div>'+
+  '<div class="bar2"></div>'+
+  (ac.objetivo?'<div style="margin-bottom:12px"><div style="font-size:10px;font-weight:700;color:#6b7a99;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px">Objetivo de la reunión</div><div class="ob">'+ac.objetivo+'</div></div>':'')+
+  '<div class="sec"><div class="n">1</div>ASISTENTES</div>'+
+  '<table><thead><tr><th style="width:26px">#</th><th>Nombre</th><th>Cargo</th><th>Empresa</th><th style="width:90px">Firma</th></tr></thead><tbody>'+(asiRows||'<tr><td colspan="5" style="text-align:center;color:#6b7a99">Sin asistentes</td></tr>')+'</tbody></table>'+
+  '<div class="sec"><div class="n">2</div>AGENDA Y DESARROLLO</div>'+
+  '<table><thead><tr><th style="width:26px">N°</th><th style="width:150px">Tema</th><th>Desarrollo</th></tr></thead><tbody>'+(agRows||'<tr><td colspan="3" style="text-align:center;color:#6b7a99">Sin agenda</td></tr>')+'</tbody></table>'+
+  '<div class="sec"><div class="n">3</div>COMPROMISOS Y TAREAS</div>'+
+  '<table><thead><tr><th>Compromiso</th><th style="width:130px">Responsable</th><th style="width:90px">Fecha límite</th><th style="width:85px">Estado</th></tr></thead><tbody>'+(compRows||'<tr><td colspan="4" style="text-align:center;color:#6b7a99">Sin compromisos</td></tr>')+'</tbody></table>'+
+  '<div class="np"><button onclick="window.print()" style="background:#1a2c4e;color:#fff;border:none;padding:10px 22px;border-radius:6px;font-size:13px;cursor:pointer">🖨 Imprimir / Guardar PDF</button></div>'+
+  '</div><div class="ftr">CAM Pasadena · HSEQ · '+consec+' · '+today+'</div></body></html>';
+  w.document.write(html);w.document.close();
+}
+
+/* ══════════════ ACTIVITY PDF ══════════════ */
+function prevPDF(aid){
+  var a=DB.a.find(function(x){return x.id===aid;});
+  var co=DB.c.find(function(c){return c.id===a.cid;})||{};if(!a)return;
+  var code='CAM-ACT-'+a.id.slice(-4).toUpperCase();
+  var today=new Date().toLocaleDateString('es-CO');
+  var w=window.open('','_blank');
+  var html='<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+code+'</title>'+
+  '<style>@page{margin:14mm}body{font-family:Arial,sans-serif;margin:0;color:#1a2c4e}'+
+  '.hdr{background:#0d1b30;padding:15px 22px;border-bottom:4px solid #c0392b;display:flex;justify-content:space-between;align-items:center}'+
+  '.hdr h1{font-size:15px;font-weight:700;color:#fff;margin:0}.hdr p{font-size:10px;color:#9aaec1;margin:3px 0 0}'+
+  '.ck{background:#c0392b;color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:3px;font-family:monospace}'+
+  '.body{padding:20px}.bar{height:3px;background:#c0392b;border-radius:2px;margin:9px 0 14px}'+
+  '.sec{font-size:10px;font-weight:700;color:#c0392b;text-transform:uppercase;letter-spacing:.08em;margin:13px 0 7px;padding-bottom:4px;border-bottom:1px solid #fdecea}'+
+  '.grid{display:grid;grid-template-columns:1fr 1fr;gap:5px 17px;margin-bottom:9px}'+
+  '.f{padding:5px 0;border-bottom:1px solid #eaecf0}.fl{font-size:9px;text-transform:uppercase;font-weight:700;color:#6b7a99}.fv{font-size:12px;margin-top:2px}'+
+  '.ftr{background:#0d1b30;color:#9aaec1;text-align:center;font-size:10px;padding:9px;margin-top:24px}'+
+  '@media print{.np{display:none}}</style></head><body>'+
+  '<div class="hdr"><div><h1>COMITÉ DE AYUDA MUTUA PASADENA</h1><p>Sistema de Gestión de Emergencias · HSEQ</p></div><div class="ck">'+code+'</div></div>'+
+  '<div class="body">'+
+  '<div style="display:flex;justify-content:space-between;margin-bottom:7px">'+
+  '<div><div style="font-size:10px;font-weight:700;color:#6b7a99;text-transform:uppercase">Reporte de Actividad</div><div style="font-size:18px;font-weight:700;color:#1a2c4e;margin-top:3px">'+a.act+'</div><div style="font-size:12px;color:#6b7a99;margin-top:2px">'+co.name+'</div></div>'+
+  '<div style="text-align:right;font-size:11px;color:#6b7a99">'+today+'</div></div>'+
+  '<div class="bar"></div>'+
+  '<div class="sec">Datos de la empresa</div>'+
+  '<div class="grid"><div class="f"><div class="fl">Entidad</div><div class="fv">'+co.name+'</div></div><div class="f"><div class="fl">Dirección</div><div class="fv">'+co.addr+'</div></div><div class="f"><div class="fl">Rep. Legal</div><div class="fv">'+(co.legal||'—')+'</div></div><div class="f"><div class="fl">Delegado CAM</div><div class="fv">'+(co.cd||'—')+'</div></div></div>'+
+  '<div class="sec">Detalle de la actividad</div>'+
+  '<div class="grid"><div class="f" style="grid-column:1/-1"><div class="fl">Actividad</div><div class="fv" style="font-size:15px;font-weight:700">'+a.act+'</div></div><div class="f" style="grid-column:1/-1"><div class="fl">Objetivo</div><div class="fv">'+(a.obj||'—')+'</div></div><div class="f"><div class="fl">Responsable</div><div class="fv">'+a.resp+'</div></div><div class="f"><div class="fl">Fecha</div><div class="fv">'+a.date+'</div></div><div class="f"><div class="fl">N° Asistentes</div><div class="fv" style="font-size:18px;font-weight:700;color:#2980b9">'+a.pers+'</div></div><div class="f"><div class="fl">Estado</div><div class="fv">'+a.st+'</div></div></div>'+
+  '<div class="sec">Emergencias contempladas</div>'+
+  '<div style="font-size:12px;padding:6px 0">'+(co.emerg||'No especificado')+'</div>'+
+  '<div class="np" style="text-align:center;margin-top:18px"><button onclick="window.print()" style="background:#1a2c4e;color:#fff;border:none;padding:9px 22px;border-radius:6px;font-size:13px;cursor:pointer">🖨 Imprimir / Guardar PDF</button></div>'+
+  '</div><div class="ftr">CAM Pasadena · HSEQ · '+code+'</div></body></html>';
+  w.document.write(html);w.document.close();
+}
+
+render();
+</script>
+</body>
+</html>
