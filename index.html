@@ -337,16 +337,12 @@ function regForm(){
   '<div class="fg gf"><label>Dirección</label><input id="f_addr" placeholder="Dirección completa, bodega, piso..."></div>'+
   '<div class="fg gf"><label>Representante Legal</label><input id="f_legal" placeholder="Nombre completo"></div></div>'+
   '<div class="sl-blue">🏥 ARL — Administradora de Riesgos Laborales</div>'+
-  '<div class="g3"><div class="fg"><label>Nombre de la ARL</label>'+
+  '<div class="fg" style="max-width:340px"><label>Nombre de la ARL</label>'+
   '<select id="f_arl"><option value="">Seleccione ARL...</option>'+
   '<option>ARL SURA</option><option>Positiva Compañía de Seguros</option><option>ARL Colmena</option>'+
   '<option>Seguros Bolívar ARL</option><option>Liberty Seguros ARL</option>'+
   '<option>Axa Colpatria ARL</option><option>Equidad Seguros ARL</option><option>Otra</option>'+
   '</select></div>'+
-  '<div class="fg"><label>N° de póliza / contrato</label><input id="f_arl_pol" placeholder="Ej: 123456789"></div>'+
-  '<div class="fg"><label>Teléfono de atención ARL</label><input id="f_arl_tel" placeholder="018000 111 170"></div></div>'+
-  '<div class="g2"><div class="fg"><label>Asesor / Contacto ARL</label><input id="f_arl_asesor" placeholder="Nombre del asesor asignado"></div>'+
-  '<div class="fg"><label>Correo del asesor ARL</label><input id="f_arl_email" placeholder="asesor@arl.com"></div></div>'+
   '<div class="sl">🚨 Delegado al CAM</div>'+
   '<div class="g3"><div class="fg"><label>Nombre</label><input id="f_cd"></div><div class="fg"><label>Teléfono</label><input id="f_cdp"></div><div class="fg"><label>Correo</label><input id="f_cde"></div></div>'+
   '<div class="sl">⚡ Líder de emergencia</div>'+
@@ -444,8 +440,8 @@ function saveC(){
   if(pin!==pin2){toast('Los PINs no coinciden','twarn');return;}
   var pp=parseInt(gv('f_pp'))||0,po=parseInt(gv('f_po'))||0;
   var co={id:'c'+Date.now(),name:nm,addr:gv('f_addr'),legal:gv('f_legal'),
-    arl:gv('f_arl'),arl_pol:gv('f_arl_pol'),arl_tel:gv('f_arl_tel'),
-    arl_asesor:gv('f_arl_asesor'),arl_email:gv('f_arl_email'),
+    arl:gv('f_arl'),arl_pol:'',arl_tel:'',
+    arl_asesor:'',arl_email:'',
     cd:gv('f_cd'),cdp:gv('f_cdp'),cde:gv('f_cde'),
     el:gv('f_el'),elp:gv('f_elp'),ele:gv('f_ele'),
     sl:gv('f_sl'),slp:gv('f_slp'),sle:gv('f_sle'),
@@ -678,66 +674,175 @@ function saveNewPin(cid){
 /* ══════════════ EDIT COMPANY MODAL ══════════════ */
 function openEdit(cid){
   var co=DB.c.find(function(c){return c.id===cid;});if(!co)return;
+  editPdfData='';editPdfName='';
+  var arlOpts=['ARL SURA','Positiva Compañía de Seguros','ARL Colmena','Seguros Bolívar ARL','Liberty Seguros ARL','Axa Colpatria ARL','Equidad Seguros ARL','Otra'];
+  var arlSel=arlOpts.map(function(o){return '<option'+(co.arl===o?' selected':'')+'>'+o+'</option>';}).join('');
+  /* build contacts rows */
+  var cRows=(co.contacts||[]).filter(function(c){return c.n;}).map(function(ct){
+    return '<div class="crow ce"><div class="fg"><label>Nombre</label><input name="cn" value="'+esc(ct.n)+'"></div><div class="fg"><label>Teléfono</label><input name="cp" value="'+esc(ct.p)+'"></div><div class="fg"><label>Cargo</label><input name="cr" value="'+esc(ct.r)+'"></div><button class="rm-btn" onclick="this.parentElement.remove()">✕</button></div>';
+  }).join('');
+  if(!cRows)cRows='<div class="crow ce"><div class="fg"><label>Nombre</label><input name="cn"></div><div class="fg"><label>Teléfono</label><input name="cp"></div><div class="fg"><label>Cargo</label><input name="cr"></div><div></div></div>';
+  /* build brigade rows */
+  var bRows=(co.brigade||[]).filter(function(b){return b.n;}).map(function(b){
+    return '<div class="brow be"><div class="fg"><label>Nombre</label><input name="bn" value="'+esc(b.n)+'"></div><div class="fg"><label>Rol</label><input name="br" value="'+esc(b.r)+'"></div><div class="fg"><label>Género</label><select name="bg"><option value="H"'+(b.g==='H'?' selected':'')+'>Hombre</option><option value="M"'+(b.g==='M'?' selected':'')+'>Mujer</option></select></div></div>';
+  }).join('');
+  if(!bRows)bRows='<div class="brow be"><div class="fg"><label>Nombre</label><input name="bn"></div><div class="fg"><label>Rol</label><input name="br"></div><div class="fg"><label>Género</label><select name="bg"><option value="H">Hombre</option><option value="M">Mujer</option></select></div></div>';
+  /* build recursos físicos rows */
+  var rfRows=(co.recursos_fisicos||[]).filter(function(r){return r.desc;}).map(function(r){
+    return '<tr><td><input name="rf_c" value="'+esc(r.cant)+'"></td><td><input name="rf_d" value="'+esc(r.desc)+'"></td><td><input name="rf_u" value="'+esc(r.ubic)+'"></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td></tr>';
+  }).join('');
+  if(!rfRows)rfRows='<tr><td><input name="rf_c" placeholder="0"></td><td><input name="rf_d" placeholder="Descripción"></td><td><input name="rf_u" placeholder="Ubicación"></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td></tr>';
+  /* build recursos humanos rows */
+  var rhRows=(co.recursos_humanos||[]).filter(function(r){return r.caract;}).map(function(r){
+    return '<tr><td><input name="rh_c" value="'+esc(r.cant)+'"></td><td><input name="rh_d" value="'+esc(r.caract)+'"></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td></tr>';
+  }).join('');
+  if(!rhRows)rhRows='<tr><td><input name="rh_c" placeholder="0"></td><td><input name="rh_d" placeholder="Características"></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td></tr>';
+
   var ov=document.createElement('div');ov.className='ov';ov.id='edit-modal';
   ov.onclick=function(e){if(e.target===ov)closeEdit();};
-  ov.innerHTML='<div class="mb mb-lg mb-gn" style="max-height:92vh;overflow-y:auto"><div class="mh"><div><h2>✏️ Editar empresa</h2><p>'+esc(co.name)+'</p></div><button class="mc" onclick="closeEdit()">✕</button></div>'+
+  ov.innerHTML=
+  '<div class="mb mb-lg mb-gn" style="max-height:95vh;overflow-y:auto">'+
+  '<div class="mh"><div><h2>✏️ Editar empresa — formulario completo</h2><p>'+esc(co.name)+'</p></div><button class="mc" onclick="closeEdit()">✕</button></div>'+
+
+  /* ── INFO GENERAL ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px">📋 Información general</div>'+
   '<div class="g2">'+
-  '<div class="fg gf"><label>Nombre *</label><input id="e_name" value="'+esc(co.name)+'"></div>'+
+  '<div class="fg gf"><label>Nombre de la Entidad *</label><input id="e_name" value="'+esc(co.name)+'"></div>'+
   '<div class="fg gf"><label>Dirección</label><input id="e_addr" value="'+esc(co.addr)+'"></div>'+
-  '<div class="fg gf"><label>Rep. Legal</label><input id="e_legal" value="'+esc(co.legal)+'"></div></div>'+
-  '<div class="sl-blue">🏥 ARL — Administradora de Riesgos Laborales</div>'+
+  '<div class="fg gf"><label>Representante Legal</label><input id="e_legal" value="'+esc(co.legal)+'"></div>'+
+  '</div></div>'+
+
+  /* ── ARL ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🏥 ARL — Administradora de Riesgos Laborales</div>'+
+  '<div class="fg" style="max-width:340px"><label>Nombre de la ARL</label>'+
+  '<select id="e_arl"><option value="">Seleccione ARL...</option>'+arlSel+'</select></div>'+
+  '</div>'+
+
+  /* ── DELEGADO CAM ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🚨 Delegado al CAM</div>'+
   '<div class="g3">'+
-  '<div class="fg"><label>Nombre de la ARL</label>'+
-  '<select id="e_arl">'+
-  '<option value="">Seleccione ARL...</option>'+
-  '<option'+(co.arl==='ARL SURA'?' selected':'')+'>ARL SURA</option>'+
-  '<option'+(co.arl==='Positiva Compañía de Seguros'?' selected':'')+'>Positiva Compañía de Seguros</option>'+
-  '<option'+(co.arl==='ARL Colmena'?' selected':'')+'>ARL Colmena</option>'+
-  '<option'+(co.arl==='Seguros Bolívar ARL'?' selected':'')+'>Seguros Bolívar ARL</option>'+
-  '<option'+(co.arl==='Liberty Seguros ARL'?' selected':'')+'>Liberty Seguros ARL</option>'+
-  '<option'+(co.arl==='Axa Colpatria ARL'?' selected':'')+'>Axa Colpatria ARL</option>'+
-  '<option'+(co.arl==='Equidad Seguros ARL'?' selected':'')+'>Equidad Seguros ARL</option>'+
-  '<option'+(co.arl==='Otra'?' selected':'')+'>Otra</option>'+
-  '</select></div>'+
-  '<div class="fg"><label>N° Póliza / Contrato</label><input id="e_arl_pol" value="'+esc(co.arl_pol||'')+'"></div>'+
-  '<div class="fg"><label>Teléfono de atención ARL</label><input id="e_arl_tel" value="'+esc(co.arl_tel||'')+'"></div>'+
-  '</div>'+
-  '<div class="g2" style="margin-top:6px">'+
-  '<div class="fg"><label>Asesor / Contacto ARL</label><input id="e_arl_asesor" value="'+esc(co.arl_asesor||'')+'"></div>'+
-  '<div class="fg"><label>Correo del asesor ARL</label><input id="e_arl_email" value="'+esc(co.arl_email||'')+'"></div>'+
-  '</div>'+
-  '<div class="sl">🚨 Delegado CAM</div><div class="g3">'+
   '<div class="fg"><label>Nombre</label><input id="e_cd" value="'+esc(co.cd)+'"></div>'+
   '<div class="fg"><label>Teléfono</label><input id="e_cdp" value="'+esc(co.cdp)+'"></div>'+
-  '<div class="fg"><label>Correo</label><input id="e_cde" value="'+esc(co.cde)+'"></div></div>'+
-  '<div class="sl">⚡ Líder emergencias</div><div class="g3">'+
+  '<div class="fg"><label>Correo</label><input id="e_cde" value="'+esc(co.cde)+'"></div>'+
+  '</div></div>'+
+
+  /* ── LIDER EMERGENCIA ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">⚡ Líder de emergencia</div>'+
+  '<div class="g3">'+
   '<div class="fg"><label>Nombre</label><input id="e_el" value="'+esc(co.el)+'"></div>'+
   '<div class="fg"><label>Teléfono</label><input id="e_elp" value="'+esc(co.elp)+'"></div>'+
-  '<div class="fg"><label>Correo</label><input id="e_ele" value="'+esc(co.ele)+'"></div></div>'+
-  '<div class="sl">🛡 Líder SG-SST</div><div class="g3">'+
+  '<div class="fg"><label>Correo</label><input id="e_ele" value="'+esc(co.ele)+'"></div>'+
+  '</div></div>'+
+
+  /* ── LIDER SGSST ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🛡 Líder SG-SST</div>'+
+  '<div class="g3">'+
   '<div class="fg"><label>Nombre</label><input id="e_sl" value="'+esc(co.sl)+'"></div>'+
   '<div class="fg"><label>Teléfono</label><input id="e_slp" value="'+esc(co.slp)+'"></div>'+
-  '<div class="fg"><label>Correo</label><input id="e_sle" value="'+esc(co.sle)+'"></div></div>'+
-  '<div class="sl">👥 Personas</div><div class="g3" style="margin-bottom:10px">'+
+  '<div class="fg"><label>Correo</label><input id="e_sle" value="'+esc(co.sle)+'"></div>'+
+  '</div></div>'+
+
+  /* ── PERSONAS ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">👥 Personas vinculadas</div>'+
+  '<div class="g3">'+
   '<div class="fg"><label>Permanentes</label><input id="e_pp" type="number" value="'+co.pp+'" oninput="calcTE()"></div>'+
   '<div class="fg"><label>Ocasionales</label><input id="e_po" type="number" value="'+co.po+'" oninput="calcTE()"></div>'+
-  '<div class="fg"><label>Total</label><input id="e_pt" readonly value="'+co.pt+'"></div></div>'+
-  '<div class="sl">⚠️ Emergencias PEC</div>'+
-  '<div class="fg"><label>Tipos de emergencia</label><textarea id="e_em">'+esc(co.emerg)+'</textarea></div>'+
-  '<div class="sl">📝 Apoyo mutuo</div><div class="g2">'+
-  '<div class="fg"><label>Apoyo físico</label><textarea id="e_apf">'+esc(co.apoyo_mutuo)+'</textarea></div>'+
-  '<div class="fg"><label>Apoyo humano</label><textarea id="e_aph">'+esc(co.apoyo_humano)+'</textarea></div></div>'+
-  '<div class="sl">📎 Acuerdo de conformación</div>'+
-  (co.acuerdo_nombre?'<div class="file-attached" style="margin-bottom:10px">📄 <strong>'+esc(co.acuerdo_nombre)+'</strong> — actualmente adjunto</div>':'')+
+  '<div class="fg"><label>Total</label><input id="e_pt" readonly value="'+co.pt+'"></div>'+
+  '</div></div>'+
+
+  /* ── CONTACTOS ADICIONALES ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">📞 Contactos adicionales</div>'+
+  '<div id="e_clist">'+cRows+'</div>'+
+  '<button class="add-btn" onclick="editAddC()">+ Agregar contacto</button>'+
+  '</div>'+
+
+  /* ── BRIGADA ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🚒 Brigada de emergencias</div>'+
+  '<div id="e_blist">'+bRows+'</div>'+
+  '<button class="add-btn" onclick="editAddB()">+ Agregar integrante</button>'+
+  '</div>'+
+
+  /* ── RECURSOS ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🏗 Recursos para emergencias</div>'+
+  '<div style="font-size:11px;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px">Recursos Físicos</div>'+
+  '<div style="overflow-x:auto"><table class="rtable"><thead><tr><th style="width:80px">Cantidad</th><th>Descripción</th><th>Ubicación</th><th style="width:36px"></th></tr></thead>'+
+  '<tbody id="e_rf_body">'+rfRows+'</tbody></table></div>'+
+  '<button class="add-btn" onclick="editAddRF()">+ Recurso físico</button>'+
+  '<div style="font-size:11px;font-weight:700;color:var(--steel);text-transform:uppercase;letter-spacing:.04em;margin:14px 0 6px">Recursos Humanos</div>'+
+  '<div style="overflow-x:auto"><table class="rtable"><thead><tr><th style="width:80px">Cantidad</th><th>Características del personal</th><th style="width:36px"></th></tr></thead>'+
+  '<tbody id="e_rh_body">'+rhRows+'</tbody></table></div>'+
+  '<button class="add-btn" onclick="editAddRH()">+ Recurso humano</button>'+
+  '<div class="g2" style="margin-top:14px">'+
+  '<div class="fg"><label>Apoyo mutuo físico</label><textarea id="e_apf">'+esc(co.apoyo_mutuo||'')+'</textarea></div>'+
+  '<div class="fg"><label>Recurso humano mutuo</label><textarea id="e_aph">'+esc(co.apoyo_humano||'')+'</textarea></div>'+
+  '</div></div>'+
+
+  /* ── EMERGENCIAS PEC ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">⚠️ Emergencias contempladas en el PEC</div>'+
+  '<div class="fg"><label>Tipos de emergencia</label><textarea id="e_em">'+esc(co.emerg||'')+'</textarea></div>'+
+  '</div>'+
+
+  /* ── ACUERDO PDF ── */
+  '<div style="background:var(--surface);border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">📎 Acuerdo de conformación y vinculación</div>'+
+  (co.acuerdo_nombre?'<div class="file-attached" style="margin-bottom:10px">📄 <strong>'+esc(co.acuerdo_nombre)+'</strong> — adjunto actual</div>':'')+
   '<div class="file-drop" onclick="document.getElementById(\'e_pdf\').click()">'+
   '<input type="file" id="e_pdf" accept=".pdf" onchange="handlePDFEdit(this)" style="display:none">'+
   '<div style="font-size:26px;margin-bottom:6px">📄</div>'+
-  '<div style="font-size:13px;color:var(--muted)">'+(co.acuerdo_nombre?'Reemplazar PDF del acuerdo':'Adjuntar PDF del acuerdo')+'</div>'+
+  '<div style="font-size:13px;color:var(--muted)">'+(co.acuerdo_nombre?'Reemplazar PDF':'Adjuntar PDF del acuerdo')+'</div>'+
   '<div style="font-size:11px;color:var(--light);margin-top:3px">Solo PDF · Máx. 5MB</div></div>'+
   '<div id="edit_pdf_preview" style="margin-top:6px"></div>'+
-  '<div class="fe"><button class="btn btn-s" onclick="closeEdit()">Cancelar</button><button class="btn btn-gn" onclick="saveEdit(\''+cid+'\')">💾 Guardar cambios</button></div></div>';
+  '</div>'+
+
+  /* ── PIN ── */
+  '<div style="background:var(--gold-light);border:1px solid #e8d078;border-radius:var(--r);padding:14px 16px;margin-bottom:14px">'+
+  '<div style="font-size:12px;font-weight:700;color:#7d600a;text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px">🔐 Actualizar PIN de empresa</div>'+
+  '<div style="font-size:12px;color:#7d600a;margin-bottom:10px">Opcional — deje en blanco para conservar el PIN actual.</div>'+
+  '<div class="g2">'+
+  '<div class="fg"><label>Nuevo PIN (4 dígitos)</label>'+
+  '<div style="position:relative"><input id="e_pin_new" type="password" maxlength="4" placeholder="••••" style="letter-spacing:.3em;font-size:18px;text-align:center;padding-right:38px">'+
+  '<button class="pin-show-btn" style="position:absolute;right:8px;top:50%;transform:translateY(-50%)" onclick="togglePin(\'e_pin_new\',\'e_pin_eye\')"><span id="e_pin_eye">👁</span></button></div></div>'+
+  '<div class="fg"><label>Confirmar nuevo PIN</label>'+
+  '<input id="e_pin_conf" type="password" maxlength="4" placeholder="••••" style="letter-spacing:.3em;font-size:18px;text-align:center"></div>'+
+  '</div></div>'+
+
+  '<div class="fe"><button class="btn btn-s" onclick="closeEdit()">Cancelar</button><button class="btn btn-gn" onclick="saveEdit(\''+cid+'\')">💾 Guardar todos los cambios</button></div>'+
+  '</div>';
   document.body.appendChild(ov);
 }
+
+/* Edit modal dynamic row adders */
+function editAddC(){
+  var r=document.createElement('div');r.className='crow ce';
+  r.innerHTML='<div class="fg"><label>Nombre</label><input name="cn"></div><div class="fg"><label>Teléfono</label><input name="cp"></div><div class="fg"><label>Cargo</label><input name="cr"></div><button class="rm-btn" onclick="this.parentElement.remove()">✕</button>';
+  document.getElementById('e_clist').appendChild(r);
+}
+function editAddB(){
+  var r=document.createElement('div');r.className='brow be';
+  r.innerHTML='<div class="fg"><label>Nombre</label><input name="bn"></div><div class="fg"><label>Rol</label><input name="br"></div><div class="fg"><label>Género</label><select name="bg"><option value="H">Hombre</option><option value="M">Mujer</option></select></div>';
+  document.getElementById('e_blist').appendChild(r);
+}
+function editAddRF(){
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td><input name="rf_c" placeholder="0"></td><td><input name="rf_d" placeholder="Descripción"></td><td><input name="rf_u" placeholder="Ubicación"></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td>';
+  document.getElementById('e_rf_body').appendChild(tr);
+}
+function editAddRH(){
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td><input name="rh_c" placeholder="0"></td><td><input name="rh_d" placeholder="Características"></td><td><button class="rm-btn" onclick="this.closest(\'tr\').remove()">✕</button></td>';
+  document.getElementById('e_rh_body').appendChild(tr);
+}
+
 var editPdfData='',editPdfName='';
 function handlePDFEdit(inp){
   var f=inp.files[0];if(!f)return;
@@ -761,17 +866,52 @@ function saveEdit(cid){
   var idx=DB.c.findIndex(function(c){return c.id===cid;});if(idx<0)return;
   var pp=parseInt(gvE('e_pp'))||0,po=parseInt(gvE('e_po'))||0;
   var co=DB.c[idx];
-  co.name=gvE('e_name');co.addr=gvE('e_addr');co.legal=gvE('e_legal');
-  co.arl=gvE('e_arl');co.arl_pol=gvE('e_arl_pol');co.arl_tel=gvE('e_arl_tel');
-  co.arl_asesor=gvE('e_arl_asesor');co.arl_email=gvE('e_arl_email');
+  /* basic info */
+  var nm=gvE('e_name');if(!nm.trim()){toast('El nombre es obligatorio');return;}
+  co.name=nm;co.addr=gvE('e_addr');co.legal=gvE('e_legal');
+  co.arl=gvE('e_arl');
+  /* contacts */
   co.cd=gvE('e_cd');co.cdp=gvE('e_cdp');co.cde=gvE('e_cde');
   co.el=gvE('e_el');co.elp=gvE('e_elp');co.ele=gvE('e_ele');
   co.sl=gvE('e_sl');co.slp=gvE('e_slp');co.sle=gvE('e_sle');
   co.pp=pp;co.po=po;co.pt=pp+po;
+  /* dynamic contacts */
+  co.contacts=[];
+  document.querySelectorAll('#e_clist .ce').forEach(function(r){
+    var n=r.querySelector('[name=cn]').value;
+    if(n.trim())co.contacts.push({n:n,p:r.querySelector('[name=cp]').value,r:r.querySelector('[name=cr]').value});
+  });
+  /* brigade */
+  co.brigade=[];
+  document.querySelectorAll('#e_blist .be').forEach(function(r){
+    var n=r.querySelector('[name=bn]').value;
+    if(n.trim())co.brigade.push({n:n,r:r.querySelector('[name=br]').value,g:r.querySelector('[name=bg]').value});
+  });
+  /* recursos físicos */
+  co.recursos_fisicos=[];
+  document.querySelectorAll('#e_rf_body tr').forEach(function(r){
+    var d=r.querySelector('[name=rf_d]').value;
+    if(d.trim())co.recursos_fisicos.push({cant:r.querySelector('[name=rf_c]').value,desc:d,ubic:r.querySelector('[name=rf_u]').value});
+  });
+  /* recursos humanos */
+  co.recursos_humanos=[];
+  document.querySelectorAll('#e_rh_body tr').forEach(function(r){
+    var d=r.querySelector('[name=rh_d]').value;
+    if(d.trim())co.recursos_humanos.push({cant:r.querySelector('[name=rh_c]').value,caract:d});
+  });
+  /* misc */
   co.emerg=gvE('e_em');co.apoyo_mutuo=gvE('e_apf');co.apoyo_humano=gvE('e_aph');
+  /* PDF */
   if(editPdfData){co.acuerdo_pdf=editPdfData;co.acuerdo_nombre=editPdfName;}
+  /* PIN (optional) */
+  var np=gvE('e_pin_new'),nc=gvE('e_pin_conf');
+  if(np){
+    if(np.length<4){toast('El nuevo PIN debe tener 4 dígitos','twarn');return;}
+    if(np!==nc){toast('Los PINs no coinciden','twarn');return;}
+    co.pin=np;
+  }
   DB.save();closeEdit();editPdfData='';editPdfName='';
-  toast('Empresa actualizada','tok');render();
+  toast('Empresa actualizada correctamente','tok');render();
 }
 
 /* ══════════════ ACTIVITIES - segmented ══════════════ */
