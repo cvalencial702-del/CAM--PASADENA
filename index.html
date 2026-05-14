@@ -699,8 +699,7 @@ function saveC(){
   if(pin!==pin2){toast('Los PINs no coinciden','twarn');return;}
   var pp=parseInt(gv('f_pp'))||0,po=parseInt(gv('f_po'))||0;
   var co={id:'c'+Date.now(),name:nm,addr:gv('f_addr'),legal:gv('f_legal'),
-    arl:gv('f_arl'),arl_pol:'',arl_tel:'',
-    arl_asesor:'',arl_email:'',
+    arl:gv('f_arl'),
     cd:gv('f_cd'),cdp:gv('f_cdp'),cde:gv('f_cde'),
     el:gv('f_el'),elp:gv('f_elp'),ele:gv('f_ele'),
     sl:gv('f_sl'),slp:gv('f_slp'),sle:gv('f_sle'),
@@ -785,21 +784,7 @@ function detail(){
   '</div></div>'+
   '<div class="card"><div class="ch"><div class="ci" style="background:#e8f4fd;">🏥</div><h2>ARL — Administradora de Riesgos Laborales</h2></div>'+
   (co.arl?
-  '<div class="g2">'+
-  '<div style="display:flex;flex-direction:column;gap:10px">'+
-  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Nombre de la ARL</div>'+
-  '<div style="font-size:15px;font-weight:600;color:var(--navy)">'+co.arl+'</div></div>'+
-  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">N° Póliza / Contrato</div>'+
-  '<div style="font-size:13px;color:var(--text);font-family:\'IBM Plex Mono\',monospace">'+(co.arl_pol||'No registrado')+'</div></div>'+
-  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Teléfono de atención</div>'+
-  '<div style="font-size:14px;font-weight:700;color:var(--steel)">📞 '+(co.arl_tel||'No registrado')+'</div></div>'+
-  '</div>'+
-  '<div style="display:flex;flex-direction:column;gap:10px">'+
-  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Asesor / Contacto ARL</div>'+
-  '<div style="font-size:13px;color:var(--text)">'+(co.arl_asesor||'No registrado')+'</div></div>'+
-  '<div><div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px">Correo del asesor</div>'+
-  '<div style="font-size:13px;color:var(--steel)">'+(co.arl_email||'No registrado')+'</div></div>'+
-  '</div></div>'
+  '<div style="font-size:15px;font-weight:600;color:var(--navy)">'+co.arl+'</div>'
   :'<div style="color:var(--muted);font-size:13px;padding:6px 0">Sin información ARL registrada.</div>')+
   '</div>'+
   '<div class="card"><div class="ch"><div class="ci ci-gn">📎</div><h2>Acuerdo de conformación y vinculación</h2><div style="margin-left:auto">'+pdfBtn+'</div></div></div>'+
