@@ -166,7 +166,6 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--surface);color:var(
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body>
 <div class="tb">
@@ -188,10 +187,15 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--surface);color:var(
 <div id="tc"></div>
 
 <script>
-const SUPABASE_URL = "PEGUE_AQUI_SU_URL";
-const SUPABASE_KEY = "PEGUE_AQUI_SU_ANON_KEY";
+/* ── SUPABASE ── */
 
-const supabaseClient = supabase.createClient(
+const SUPABASE_URL = "https://rmgyllzvfsjlpftkeztu.supabase.co";
+
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtZ3lsbHp2ZnNqbHBmdGtlenR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg3MjA2MTcsImV4cCI6MjA5NDI5NjYxN30.k_91IIHfHPJ_842SSWLgp832EtS-RayNf3IDdUwaWgc";
+
+const { createClient } = supabase;
+
+const supabaseClient = createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
@@ -462,7 +466,9 @@ function saveC(){
   document.querySelectorAll('.be').forEach(function(r){co.brigade.push({n:r.querySelector('[name=bn]').value,r:r.querySelector('[name=br]').value,g:r.querySelector('[name=bg]').value});});
   document.querySelectorAll('#rf_body tr').forEach(function(r){co.recursos_fisicos.push({cant:r.querySelector('[name=rf_c]').value,desc:r.querySelector('[name=rf_d]').value,ubic:r.querySelector('[name=rf_u]').value});});
   document.querySelectorAll('#rh_body tr').forEach(function(r){co.recursos_humanos.push({cant:r.querySelector('[name=rh_c]').value,caract:r.querySelector('[name=rh_d]').value});});
-  guardarEmpresaSupabase(co);pdfName='';
+  await supabaseClient
+  .from('empresas_cam')
+  .insert([co]);pdfData='';pdfName='';
   toast('Empresa registrada. Guarde su PIN de acceso.','tok');go('companies');
 }
 
@@ -1389,27 +1395,6 @@ function prevPDF(aid){
 }
 
 render();
-async function guardarEmpresaSupabase(co){
-
-  const { data, error } = await supabaseClient
-    .from('empresas_cam')
-    .insert([co]);
-
-  if(error){
-
-    console.error(error);
-    toast("Error guardando en Supabase");
-
-  }else{
-
-    toast("Empresa guardada en Supabase","tok");
-
-    DB.c.push(co);
-    DB.save();
-
-    go('companies');
-  }
-}
 </script>
 </body>
 </html>
