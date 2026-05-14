@@ -188,72 +188,331 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--surface);color:var(
 
 <script>
 /* ── STORAGE ── */
-var DB={
-  c:JSON.parse(localStorage.getItem('cam_c')||'[]'),
-  a:JSON.parse(localStorage.getItem('cam_a')||'[]'),
-  actas:JSON.parse(localStorage.getItem('cam_actas')||'[]'),
-  save:function(){
-    localStorage.setItem('cam_c',JSON.stringify(this.c));
-    localStorage.setItem('cam_a',JSON.stringify(this.a));
-    localStorage.setItem('cam_actas',JSON.stringify(this.actas));
+/* ══════════════════════════════════════════════════════════════
+   SUPABASE — REST API nativa (sin SDK para evitar postMessage errors)
+══════════════════════════════════════════════════════════════ */
+const SB_URL = 'https://ixlmuhlusmbikditybne.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml4bG11aGx1c21iaWtkaXR5Ym5lIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY2NjY3OTksImV4cCI6MjA5MjI0Mjc5OX0.mshlJEZ7U-PERXx7g-ztvHAxGEA5bICaa5sh87TNP1s';
+
+/* Helper fetch genérico */
+async function sbFetch(method, table, opts) {
+  opts = opts || {};
+  var url = SB_URL + '/rest/v1/' + table;
+  var params = [];
+  if (opts.select)  params.push('select=' + encodeURIComponent(opts.select));
+  if (opts.filter)  params.push(opts.filter);
+  if (opts.order)   params.push('order=' + opts.order);
+  if (opts.limit)   params.push('limit=' + opts.limit);
+  if (params.length) url += '?' + params.join('&');
+
+  var headers = {
+    'apikey':        SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type':  'application/json',
+    'Prefer':        'return=representation'
+  };
+  if (method === 'GET') delete headers['Content-Type'];
+
+  var res = await fetch(url, {
+    method:  method,
+    headers: headers,
+    body:    opts.body ? JSON.stringify(opts.body) : undefined
+  });
+
+  if (!res.ok) {
+    var errText = await res.text();
+    throw new Error('Supabase ' + method + ' ' + table + ': ' + res.status + ' ' + errText);
   }
+  if (res.status === 204) return [];
+  return res.json();
+}
+
+/* Shortcuts */
+var sb = {
+  get:    function(t, s, f, o) { return sbFetch('GET',    t, {select:s, filter:f, order:o}); },
+  post:   function(t, b)       { return sbFetch('POST',   t, {body:b}); },
+  patch:  function(t, b, f)    { return sbFetch('PATCH',  t, {body:b, filter:f}); },
+  del:    function(t, f)       { return sbFetch('DELETE', t, {filter:f}); },
 };
 
-function nextConsec(){
-  if(!DB.actas.length)return 'ACTA-CAM-001';
-  var nums=DB.actas.map(function(a){return parseInt((a.consec||'0').replace(/\D/g,''))||0;});
-  return 'ACTA-CAM-'+String(Math.max.apply(null,nums)+1).padStart(3,'0');
-}
+/* ══════════════════════════════════════════════════════════════
+   DB — capa de datos: Supabase REST + localStorage caché
+══════════════════════════════════════════════════════════════ */
+var DB = {
+  c: [], a: [], actas: [],
+
+  /* ── LOAD ALL ─────────────────────────────────────────────── */
+  async load() {
+    try {
+      var [emps, conts, brigs, rfs, rhs, acts, actas,
+           asists, agendas, comps] = await Promise.all([
+        sb.get('cam_empresas',          '*',          null, 'created_at.asc'),
+        sb.get('cam_contactos',         '*',          null, 'orden.asc'),
+        sb.get('cam_brigada',           '*',          null, 'orden.asc'),
+        sb.get('cam_recursos_fisicos',  '*',          null, 'orden.asc'),
+        sb.get('cam_recursos_humanos',  '*',          null, 'orden.asc'),
+        sb.get('cam_actividades',       '*',          null, 'created_at.asc'),
+        sb.get('cam_actas',             '*',          null, 'created_at.asc'),
+        sb.get('cam_actas_asistentes',  '*',          null, 'orden.asc'),
+        sb.get('cam_actas_agenda',      '*',          null, 'numero.asc'),
+        sb.get('cam_actas_compromisos', '*',          null, 'id.asc'),
+      ]);
+
+      this.c = emps.map(function(e) {
+        return {
+          id: e.id, name: e.name, addr: e.addr||'', legal: e.legal||'', arl: e.arl||'',
+          cd: e.cd||'', cdp: e.cdp||'', cde: e.cde||'',
+          el: e.el||'', elp: e.elp||'', ele: e.ele||'',
+          sl: e.sl||'', slp: e.slp||'', sle: e.sle||'',
+          pp: e.pp||0, po: e.po||0, pt: e.pt||0,
+          emerg: e.emerg||'', apoyo_mutuo: e.apoyo_mutuo||'', apoyo_humano: e.apoyo_humano||'',
+          acuerdo_pdf: e.acuerdo_pdf||'', acuerdo_nombre: e.acuerdo_nombre||'',
+          pin: e.pin_hash||'',
+          date: (e.created_at||'').slice(0,10),
+          contacts:         conts.filter(function(x){return x.empresa_id===e.id;}).map(function(x){return {n:x.nombre||'',p:x.telefono||'',r:x.cargo||''};}),
+          brigade:          brigs.filter(function(x){return x.empresa_id===e.id;}).map(function(x){return {n:x.nombre||'',r:x.rol||'',g:x.genero||'H'};}),
+          recursos_fisicos: rfs.filter(function(x){return x.empresa_id===e.id;}).map(function(x){return {cant:x.cantidad||'',desc:x.descripcion||'',ubic:x.ubicacion||''};}),
+          recursos_humanos: rhs.filter(function(x){return x.empresa_id===e.id;}).map(function(x){return {cant:x.cantidad||'',caract:x.caracteristicas||''};})
+        };
+      });
+
+      this.a = acts.map(function(a) {
+        return {id:a.id, cid:a.empresa_id, act:a.actividad||'', obj:a.objetivo||'',
+                resp:a.responsable||'', date:a.fecha||'', pers:a.personas||0, st:a.estado||'Programada'};
+      });
+
+      this.actas = actas.map(function(ac) {
+        return {
+          id:ac.id, consec:ac.consecutivo, tipo:ac.tipo, modalidad:ac.modalidad||'Presencial',
+          fecha:ac.fecha||'', hi:(ac.hora_inicio||'').slice(0,5), hf:(ac.hora_fin||'').slice(0,5),
+          lugar:ac.lugar||'', objetivo:ac.objetivo||'', empresas:ac.empresas||[],
+          asistentes: asists.filter(function(x){return x.acta_id===ac.id;}).map(function(x){return {n:x.nombre||'',cargo:x.cargo||'',eid:x.empresa_id||'',firma:x.firma||''};}),
+          agenda:     agendas.filter(function(x){return x.acta_id===ac.id;}).map(function(x){return {tema:x.tema||'',des:x.desarrollo||''};}),
+          compromisos:comps.filter(function(x){return x.acta_id===ac.id;}).map(function(x){return {desc:x.descripcion||'',resp:x.responsable||'',fecha:x.fecha_limite||'',st:x.estado||'Pendiente'};})
+        };
+      });
+
+      this._cache();
+      return true;
+    } catch(err) {
+      console.warn('Supabase no disponible, caché local:', err.message);
+      this._loadCache();
+      return false;
+    }
+  },
+
+  /* ── GUARDAR EMPRESA ─────────────────────────────────────── */
+  async saveEmpresa(co) {
+    var isNew = !co.id || !this.c.find(function(x){return x.id===co.id;});
+    var row = {
+      name:co.name, addr:co.addr||'', legal:co.legal||'', arl:co.arl||'',
+      cd:co.cd||'', cdp:co.cdp||'', cde:co.cde||'',
+      el:co.el||'', elp:co.elp||'', ele:co.ele||'',
+      sl:co.sl||'', slp:co.slp||'', sle:co.sle||'',
+      pp:co.pp||0, po:co.po||0, pt:co.pt||0,
+      emerg:co.emerg||'', apoyo_mutuo:co.apoyo_mutuo||'', apoyo_humano:co.apoyo_humano||'',
+      acuerdo_pdf:co.acuerdo_pdf||null, acuerdo_nombre:co.acuerdo_nombre||null,
+      pin_hash:co.pin||''
+    };
+
+    var result;
+    if (isNew) {
+      result = await sb.post('cam_empresas', row);
+    } else {
+      result = await sb.patch('cam_empresas', row, 'id=eq.' + co.id);
+    }
+    var saved = Array.isArray(result) ? result[0] : result;
+    var eid = saved.id;
+
+    /* Reemplazar hijos */
+    await Promise.all([
+      sb.del('cam_contactos',         'empresa_id=eq.' + eid),
+      sb.del('cam_brigada',           'empresa_id=eq.' + eid),
+      sb.del('cam_recursos_fisicos',  'empresa_id=eq.' + eid),
+      sb.del('cam_recursos_humanos',  'empresa_id=eq.' + eid),
+    ]);
+
+    var inserts = [];
+    var cs = (co.contacts||[]).filter(function(c){return c.n;});
+    var bs = (co.brigade||[]).filter(function(b){return b.n;});
+    var rfs = (co.recursos_fisicos||[]).filter(function(r){return r.desc;});
+    var rhs = (co.recursos_humanos||[]).filter(function(r){return r.caract;});
+    if (cs.length)  inserts.push(sb.post('cam_contactos',        cs.map(function(c,i){return {empresa_id:eid,nombre:c.n,telefono:c.p,cargo:c.r,orden:i};})));
+    if (bs.length)  inserts.push(sb.post('cam_brigada',          bs.map(function(b,i){return {empresa_id:eid,nombre:b.n,rol:b.r,genero:b.g,orden:i};})));
+    if (rfs.length) inserts.push(sb.post('cam_recursos_fisicos', rfs.map(function(r,i){return {empresa_id:eid,cantidad:r.cant,descripcion:r.desc,ubicacion:r.ubic,orden:i};})));
+    if (rhs.length) inserts.push(sb.post('cam_recursos_humanos', rhs.map(function(r,i){return {empresa_id:eid,cantidad:r.cant,caracteristicas:r.caract,orden:i};})));
+    if (inserts.length) await Promise.all(inserts);
+
+    co.id = eid;
+    return eid;
+  },
+
+  /* ── BORRAR EMPRESA ─────────────────────────────────────── */
+  async deleteEmpresa(id) {
+    await sb.del('cam_empresas', 'id=eq.' + id);
+  },
+
+  /* ── GUARDAR ACTIVIDAD ───────────────────────────────────── */
+  async saveActividad(a, isNew) {
+    var row = {empresa_id:a.cid, actividad:a.act||'', objetivo:a.obj||'',
+               responsable:a.resp||'', fecha:a.date||null, personas:a.pers||0, estado:a.st||'Programada'};
+    var res;
+    if (isNew) res = await sb.post('cam_actividades', row);
+    else       res = await sb.patch('cam_actividades', row, 'id=eq.' + a.id);
+    var saved = Array.isArray(res) ? res[0] : res;
+    return saved.id;
+  },
+
+  /* ── GUARDAR ACTA ────────────────────────────────────────── */
+  async saveActa(ac, isNew) {
+    var row = {
+      consecutivo:ac.consec, tipo:ac.tipo, modalidad:ac.modalidad||'Presencial',
+      fecha:ac.fecha||null, hora_inicio:ac.hi||null, hora_fin:ac.hf||null,
+      lugar:ac.lugar||'', objetivo:ac.objetivo||'', empresas:ac.empresas||[]
+    };
+    var res;
+    if (isNew) res = await sb.post('cam_actas', row);
+    else       res = await sb.patch('cam_actas', row, 'id=eq.' + ac.id);
+    var saved = Array.isArray(res) ? res[0] : res;
+    var aid = saved.id;
+
+    await Promise.all([
+      sb.del('cam_actas_asistentes',  'acta_id=eq.' + aid),
+      sb.del('cam_actas_agenda',      'acta_id=eq.' + aid),
+      sb.del('cam_actas_compromisos', 'acta_id=eq.' + aid),
+    ]);
+
+    var ins = [];
+    var asis = (ac.asistentes||[]).filter(function(x){return x.n;});
+    var ag   = (ac.agenda||[]).filter(function(x){return x.tema;});
+    var comp = (ac.compromisos||[]).filter(function(x){return x.desc;});
+    if (asis.length) ins.push(sb.post('cam_actas_asistentes',  asis.map(function(x,i){return {acta_id:aid,nombre:x.n,cargo:x.cargo||'',empresa_id:x.eid||null,firma:x.firma||'',orden:i};})));
+    if (ag.length)   ins.push(sb.post('cam_actas_agenda',      ag.map(function(x,i){return {acta_id:aid,numero:i+1,tema:x.tema,desarrollo:x.des||''};})));
+    if (comp.length) ins.push(sb.post('cam_actas_compromisos', comp.map(function(x){return {acta_id:aid,descripcion:x.desc,responsable:x.resp||'',fecha_limite:x.fecha||null,estado:x.st||'Pendiente'};})));
+    if (ins.length) await Promise.all(ins);
+    return aid;
+  },
+
+  /* ── BORRAR ACTA ─────────────────────────────────────────── */
+  async deleteActa(id) {
+    await sb.del('cam_actas', 'id=eq.' + id);
+  },
+
+  /* ── CONSECUTIVO ─────────────────────────────────────────── */
+  nextConsec() {
+    if (!this.actas.length) return 'ACTA-CAM-001';
+    var nums = this.actas.map(function(a){return parseInt((a.consec||'0').replace(/\D/g,''))||0;});
+    return 'ACTA-CAM-' + String(Math.max.apply(null, nums) + 1).padStart(3,'0');
+  },
+
+  /* ── CACHÉ LOCAL ─────────────────────────────────────────── */
+  _cache() {
+    try {
+      localStorage.setItem('cam_c',     JSON.stringify(this.c));
+      localStorage.setItem('cam_a',     JSON.stringify(this.a));
+      localStorage.setItem('cam_actas', JSON.stringify(this.actas));
+    } catch(e){}
+  },
+  _loadCache() {
+    this.c     = JSON.parse(localStorage.getItem('cam_c')    ||'[]');
+    this.a     = JSON.parse(localStorage.getItem('cam_a')    ||'[]');
+    this.actas = JSON.parse(localStorage.getItem('cam_actas')||'[]');
+  },
+  save() { this._cache(); }
+};
+
+function nextConsec(){ return DB.nextConsec(); }
 
 /* seed */
-if(!DB.c.length){
-  DB.c=[
-    {id:'c1',name:'Industrias Metálicas S.A.S',addr:'Cra 15 # 45-32, Bodega 8, Pasadena',legal:'Jorge Ramírez Ospina',
-     arl:'ARL SURA',arl_pol:'POL-2024-087654',arl_tel:'018000 767 872',arl_asesor:'Camilo Rueda',arl_email:'crueda@sura.com.co',
-     cd:'Ana Lucia Torres',cdp:'3105678901',cde:'atores@metalicas.com',
-     el:'Carlos Suárez',elp:'3201234567',ele:'csuarez@metalicas.com',
-     sl:'Paola Venegas',slp:'3189876543',sle:'pvenegas@metalicas.com',
-     pp:60,po:25,pt:85,pin:'1234',
-     contacts:[{n:'Ana Torres',p:'3105678901',r:'Delegado CAM'}],
-     brigade:[{n:'Luis Morales',r:'Primeros Auxilios',g:'H'},{n:'Sandra Pérez',r:'Evacuación',g:'M'},{n:'René Castro',r:'Contraincendios',g:'H'}],
-     emerg:'Incendio, Derrame químico, Sismo, Accidente laboral',
-     recursos_fisicos:[{cant:'3',desc:'Extintores CO2 10lb',ubic:'Planta baja'}],
-     recursos_humanos:[{cant:'6',caract:'Brigadistas certificados CRUE'}],
-     apoyo_mutuo:'2 extintores portátiles disponibles',apoyo_humano:'3 brigadistas para apoyo externo',
-     acuerdo_pdf:'',acuerdo_nombre:'',date:'2025-11-14'},
-    {id:'c2',name:'Logística Express Colombia',addr:'Av. Calle 80 # 100-21, Zona Industrial',legal:'Martina Herrera Gil',
-     arl:'Positiva Compañía de Seguros',arl_pol:'POL-2025-112233',arl_tel:'018000 111 170',arl_asesor:'Sandra Gómez',arl_email:'sgomez@positiva.gov.co',
-     cd:'Pedro Cárdenas',cdp:'3004567890',cde:'pcardenas@logexpress.co',
-     el:'Rosa Méndez',elp:'3123456789',ele:'rmendez@logexpress.co',
-     sl:'Felipe Ortiz',slp:'3167654321',sle:'fortiz@logexpress.co',
-     pp:30,po:12,pt:42,pin:'5678',
-     contacts:[{n:'Pedro Cárdenas',p:'3004567890',r:'Delegado CAM'}],
-     brigade:[{n:'Jorge Niño',r:'Contraincendios',g:'H'},{n:'Claudia Vega',r:'Primeros Auxilios',g:'M'}],
-     emerg:'Incendio, Accidente de tránsito, Sismo',
-     recursos_fisicos:[{cant:'2',desc:'Extintores multipropósito',ubic:'Bodega'}],
-     recursos_humanos:[{cant:'4',caract:'Curso básico emergencias'}],
-     apoyo_mutuo:'Vehículo de carga para evacuación',apoyo_humano:'2 conductores con primeros auxilios',
-     acuerdo_pdf:'',acuerdo_nombre:'',date:'2025-12-01'}
-  ];
-  DB.a=[
-    {id:'a1',cid:'c1',act:'Simulacro de evacuación',obj:'Evaluar tiempos de respuesta',resp:'Ana Torres',date:'2026-03-15',pers:85,st:'Completada'},
-    {id:'a2',cid:'c1',act:'Capacitación primeros auxilios',obj:'Entrenamiento BLS',resp:'Carlos Suárez',date:'2026-04-10',pers:20,st:'Completada'},
-    {id:'a3',cid:'c2',act:'Inspección de extintores',obj:'Verificar carga y vigencia',resp:'Pedro Cárdenas',date:'2026-05-20',pers:5,st:'Programada'}
-  ];
-  DB.actas=[{id:'ac1',consec:'ACTA-CAM-001',tipo:'Reunión ordinaria CAM',modalidad:'Presencial',fecha:'2026-02-20',hi:'09:00',hf:'11:00',lugar:'Sala Ind. Metálicas',objetivo:'Revisión PEC 2026',asistentes:[{n:'Ana Torres',cargo:'Delegado CAM',eid:'c1'},{n:'Pedro Cárdenas',cargo:'Delegado CAM',eid:'c2'}],agenda:[{tema:'Apertura y quórum',des:'Quórum completo.'},{tema:'Revisión PEC 2026',des:'Actualización de PEC presentada.'}],compromisos:[{desc:'Actualizar plano de evacuación',resp:'Ana Torres',fecha:'2026-03-01',st:'Pendiente'}],empresas:['c1','c2']}];
-  DB.save();
-}
 
-/* ── STATE ── */
+/* ── APP BOOT ─────────────────────────────────────────────── */
 var V='home',CID=null,EA=null,ACTA_ID=null,MOD='Presencial';
-var ACT_SEG='all'; /* active segment in activities view */
+var ACT_SEG='all';
 var TAGS={Completada:'tg',Programada:'tb2','En ejecución':'ty',Cancelada:'tr2'};
 var ATAGS={Pendiente:'tr2','En proceso':'ty',Completado:'tg'};
 var pdfData='',pdfName='';
-/* PIN modal state */
 var pinAction='',pinTarget='',pinTarget2='';
-/* Master recovery PIN — never displayed, only used as fallback */
 var MASTER='PASADENA';
+
+/* Pantalla de carga */
+document.getElementById('root').innerHTML=
+  '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:62vh;gap:16px">'+
+  '<div style="font-size:44px">🔄</div>'+
+  '<div style="font-size:15px;font-weight:600;color:var(--navy)">Conectando con Supabase...</div>'+
+  '<div style="font-size:13px;color:var(--muted)">CAM Pasadena · Cargando datos del servidor</div></div>';
+
+/* Boot */
+DB.load().then(function(online){
+  if(online){
+    /* Si Supabase está vacío pero hay datos locales → migrar automáticamente */
+    var localC = JSON.parse(localStorage.getItem('cam_c')||'[]');
+    var localA = JSON.parse(localStorage.getItem('cam_a')||'[]');
+    var localActas = JSON.parse(localStorage.getItem('cam_actas')||'[]');
+    if(DB.c.length===0 && localC.length>0){
+      toast('🔄 Migrando '+localC.length+' empresa(s) a Supabase...','twarn');
+      migrateLocalToSupabase(localC, localA, localActas).then(function(){
+        return DB.load();
+      }).then(function(){
+        toast('✅ Migración completada — '+DB.c.length+' empresa(s) sincronizadas','tok');
+        render();
+      }).catch(function(e){
+        toast('⚠️ Error en migración: '+e.message,'');
+        DB._loadCache(); render();
+      });
+    } else {
+      toast('✅ Conectado a Supabase — '+DB.c.length+' empresa(s)','tok');
+      render();
+    }
+  } else {
+    toast('⚠️ Modo offline — datos locales','twarn');
+    render();
+  }
+}).catch(function(err){
+  DB._loadCache();
+  toast('⚠️ Sin conexión — modo offline','twarn');
+  render();
+});
+
+/* ── MIGRACIÓN: localStorage → Supabase ──────────────────── */
+async function migrateLocalToSupabase(companies, activities, actas){
+  var idMap = {}; /* old local id → new Supabase UUID */
+  /* Migrar empresas una por una para obtener los UUIDs */
+  for(var i=0;i<companies.length;i++){
+    var co = companies[i];
+    co.id = null; /* forzar insert */
+    try {
+      var newId = await DB.saveEmpresa(co);
+      idMap[companies[i].id||('c'+i)] = newId;
+      /* Actualizar referencia local */
+      companies[i].id = newId;
+    } catch(e){ console.error('Error migrando empresa',co.name,e); }
+  }
+  /* Migrar actividades remapeando empresa_id */
+  if(activities.length){
+    var actRows = activities.map(function(a){
+      return { empresa_id: idMap[a.cid]||null, actividad:a.act, objetivo:a.obj,
+               responsable:a.resp, fecha:a.date||null, personas:a.pers||0, estado:a.st||'Programada' };
+    }).filter(function(r){return r.empresa_id;});
+    if(actRows.length){
+      var r = await sb.post('cam_actividades', actRows);
+      if(r.error) console.error('Error migrando actividades',r.error);
+    }
+  }
+  /* Migrar actas remapeando empresa_ids en array */
+  for(var j=0;j<actas.length;j++){
+    var ac = actas[j];
+    ac.empresas = (ac.empresas||[]).map(function(eid){return idMap[eid]||eid;}).filter(Boolean);
+    /* Remap asistentes empresa_id */
+    (ac.asistentes||[]).forEach(function(x){if(x.eid)x.eid=idMap[x.eid]||x.eid;});
+    ac.id = null;
+    try { await DB.saveActa(ac, true); } catch(e){ console.error('Error migrando acta',e); }
+  }
+  /* Limpiar localStorage post-migración */
+  localStorage.removeItem('cam_c');
+  localStorage.removeItem('cam_a');
+  localStorage.removeItem('cam_actas');
+}
+
 
 function tag(s,map){map=map||TAGS;return '<span class="tag '+(map[s]||'tb2')+'">'+s+'</span>';}
 function go(v,id){
@@ -454,8 +713,16 @@ function saveC(){
   document.querySelectorAll('.be').forEach(function(r){co.brigade.push({n:r.querySelector('[name=bn]').value,r:r.querySelector('[name=br]').value,g:r.querySelector('[name=bg]').value});});
   document.querySelectorAll('#rf_body tr').forEach(function(r){co.recursos_fisicos.push({cant:r.querySelector('[name=rf_c]').value,desc:r.querySelector('[name=rf_d]').value,ubic:r.querySelector('[name=rf_u]').value});});
   document.querySelectorAll('#rh_body tr').forEach(function(r){co.recursos_humanos.push({cant:r.querySelector('[name=rh_c]').value,caract:r.querySelector('[name=rh_d]').value});});
-  DB.c.push(co);DB.save();pdfData='';pdfName='';
-  toast('Empresa registrada. Guarde su PIN de acceso.','tok');go('companies');
+  pdfData='';pdfName='';
+  toast('Guardando empresa...','');
+  DB.saveEmpresa(co).then(function(){
+    return DB.load();
+  }).then(function(){
+    toast('Empresa registrada correctamente ✅','tok');
+    go('companies');
+  }).catch(function(err){
+    toast('Error al guardar: '+err.message,'');
+  });
 }
 
 /* ══════════════ DETAIL ══════════════ */
@@ -587,17 +854,20 @@ function checkRecovery(){
 }
 function executeAction(){
   if(pinAction==='delCo'){
-    DB.c=DB.c.filter(function(c){return c.id!==pinTarget;});
-    DB.a=DB.a.filter(function(a){return a.cid!==pinTarget;});
-    DB.save();toast('Empresa eliminada');go('companies');
+    toast('Eliminando...','');
+    DB.deleteEmpresa(pinTarget).then(function(){return DB.load();}).then(function(){
+      toast('Empresa eliminada','tok');go('companies');
+    }).catch(function(e){toast('Error: '+e.message,'');});
   } else if(pinAction==='editCo'){
     openEdit(pinTarget);
   } else if(pinAction==='editA'){
     var actE=DB.a.find(function(a){return a.id===pinTarget;});
     if(actE)openAM(actE.cid,actE.id);
   } else if(pinAction==='delActa'){
-    DB.actas=DB.actas.filter(function(a){return a.id!==pinTarget;});
-    DB.save();toast('Acta eliminada');go('actas');
+    toast('Eliminando acta...','');
+    DB.deleteActa(pinTarget).then(function(){return DB.load();}).then(function(){
+      toast('Acta eliminada','tok');go('actas');
+    }).catch(function(e){toast('Error: '+e.message,'');});
   } else if(pinAction==='editActa'){
     ACTA_ID=pinTarget;go('acta-detail');
   }
@@ -667,8 +937,10 @@ function saveNewPin(cid){
   if(np!==nc){toast('Los PINs no coinciden','twarn');return;}
   var idx=DB.c.findIndex(function(c){return c.id===cid;});
   if(idx<0){toast('Empresa no encontrada');return;}
-  DB.c[idx].pin=np;DB.save();
-  closeResetPin();toast('PIN restablecido exitosamente','tok');
+  DB.c[idx].pin=np;
+  sb.patch('cam_empresas', {pin_hash:np}, 'id=eq.'+cid).then(function(){
+    DB.save();closeResetPin();toast('PIN restablecido exitosamente ✅','tok');
+  }).catch(function(e){toast('Error al guardar PIN: '+e.message,'');});
 }
 
 /* ══════════════ EDIT COMPANY MODAL ══════════════ */
@@ -911,7 +1183,12 @@ function saveEdit(cid){
     co.pin=np;
   }
   DB.save();closeEdit();editPdfData='';editPdfName='';
-  toast('Empresa actualizada correctamente','tok');render();
+  toast('Guardando cambios...','');
+  DB.saveEmpresa(co).then(function(){return DB.load();}).then(function(){
+    toast('Empresa actualizada correctamente ✅','tok');
+    closeEdit();editPdfData='';editPdfName='';
+    render();
+  }).catch(function(e){toast('Error: '+e.message,'');});
 }
 
 /* ══════════════ ACTIVITIES - segmented ══════════════ */
@@ -958,10 +1235,13 @@ function openAM(cid,aid){
 function closeM(){['am','pm'].forEach(function(id){var el=document.getElementById(id);if(el)el.remove();});EA=null;}
 function saveA(cid){
   var act=gv('ma_act');if(!act.trim()){toast('Nombre obligatorio');return;}
-  var o={id:EA?EA.id:'a'+Date.now(),cid:cid,act:act,obj:gv('ma_obj'),resp:gv('ma_resp'),date:gv('ma_date'),pers:parseInt(gv('ma_pers'))||0,st:gv('ma_st')};
-  if(EA){var i=DB.a.findIndex(function(a){return a.id===EA.id;});DB.a[i]=o;toast('Actualizada','tok');}
-  else{DB.a.push(o);toast('Registrada','tok');}
-  DB.save();closeM();render();
+  var o={id:EA?EA.id:null,cid:cid,act:act,obj:gv('ma_obj'),resp:gv('ma_resp'),date:gv('ma_date'),pers:parseInt(gv('ma_pers'))||0,st:gv('ma_st')};
+  var isNew=!EA;
+  toast(isNew?'Guardando actividad...':'Actualizando...','');
+  DB.saveActividad(o,isNew).then(function(){return DB.load();}).then(function(){
+    toast(isNew?'Actividad registrada ✅':'Actividad actualizada ✅','tok');
+    closeM();render();
+  }).catch(function(e){toast('Error: '+e.message,'');});
 }
 
 /* ══════════════ ACTAS ══════════════ */
@@ -1038,8 +1318,11 @@ function saveActa(){
   var d=getActaData();
   if(!d.tipo){toast('Seleccione el tipo','twarn');return;}
   if(!d.fecha){toast('La fecha es obligatoria','twarn');return;}
-  d.id='ac'+Date.now();d.consec=nextConsec();
-  DB.actas.push(d);DB.save();toast(d.consec+' guardada','tok');go('actas');
+  d.id=null; d.consec=nextConsec();
+  toast('Guardando acta '+d.consec+'...','');
+  DB.saveActa(d,true).then(function(){return DB.load();}).then(function(){
+    toast(d.consec+' guardada ✅','tok');go('actas');
+  }).catch(function(e){toast('Error: '+e.message,'');});
 }
 function prevActa(){openActaPDF(getActaData());}
 
